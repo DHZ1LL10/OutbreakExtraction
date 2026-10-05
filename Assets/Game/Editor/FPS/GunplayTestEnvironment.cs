@@ -11,6 +11,26 @@ namespace Outbreak.Editor
     public static class GunplayTestEnvironment
     {
         private const string Content = "Assets/Game/DebugContent/Gunplay";
+        // Shared gunplay factory for new combat tests; does not open/save or alter existing scenes.
+        public static GameObject CreateArmedPlayer(Vector3 position)
+        {
+            Folder("Assets/Game", "DebugContent"); Folder("Assets/Game/DebugContent", "Gunplay");
+            var shader = Shader.Find("Universal Render Pipeline/Lit");
+            if (shader == null) throw new System.InvalidOperationException("Gunplay needs URP/Lit.");
+            var player = FPSTestEnvironment.CreatePlayer(position);
+            var camera = player.GetComponentInChildren<Camera>();
+            SetBool(player.GetComponentInChildren<Outbreak.Cameras.BodycamController>(), "enableLensDistortion", false);
+            var root = Child("WeaponRoot", camera.transform);
+            var sight = Material("Sight", new Color(0.8f, 0.85f, 0.65f), shader);
+            var rifleView = View("DebugRifle", root, true, Material("Rifle", new Color(0.3f, 0.35f, 0.22f), shader), sight);
+            var pistolView = View("DebugPistol", root, false, Material("Pistol", new Color(0.22f, 0.3f, 0.35f), shader), sight);
+            var firearm = player.AddComponent<FirearmController>();
+            Reference(firearm, "viewCamera", camera); Reference(firearm, "primary", Definition(true)); Reference(firearm, "secondary", Definition(false));
+            Reference(firearm, "primaryView", rifleView); Reference(firearm, "secondaryView", pistolView);
+            pistolView.gameObject.SetActive(false);
+            GunplayAttachmentContent.Configure(player); player.AddComponent<WeaponDebugOverlay>(); ValidateLoadout(firearm);
+            return player;
+        }
         [MenuItem("Outbreak/Crear entorno de prueba Gunplay")]
         public static void Create() => CreateEnvironment(false);
         [MenuItem("Outbreak/Crear entorno de prueba Gunplay 3B")]

@@ -1,5 +1,5 @@
 {
   "name": "Outbreak.FPS.Editor",
   "includePlatforms": ["Editor"],
-  "references": ["Outbreak.Game", "Outbreak.Bodycam", "Unity.RenderPipelines.Core.Runtime", "Unity.RenderPipelines.Universal.Runtime"]
+  "references": ["Outbreak.Game", "Outbreak.Bodycam", "Unity.RenderPipelines.Core.Runtime", "Unity.RenderPipelines.Universal.Runtime", "Unity.AI.Navigation"]
 }

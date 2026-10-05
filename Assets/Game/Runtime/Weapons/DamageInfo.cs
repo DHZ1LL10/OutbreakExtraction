@@ -12,6 +12,12 @@ namespace Outbreak.Weapons
         public GameObject Source { get; }
         public bool IsHeadshot { get; }
         public string WeaponId { get; }
+        // Already-resolved damage for melee/environment. Firearm constructor retains headshot calculation.
+        public DamageInfo(float damage, Vector3 point, Vector3 normal, GameObject source)
+        {
+            Damage = float.IsNaN(damage) || float.IsInfinity(damage) ? 0 : Mathf.Max(0, damage);
+            HitPoint = point; HitNormal = normal; Source = source; IsHeadshot = false; WeaponId = string.Empty;
+        }
         public DamageInfo(WeaponDefinition weapon, HitZone zone, Vector3 point, Vector3 normal, GameObject source)
         {
             IsHeadshot = zone == HitZone.Head;
