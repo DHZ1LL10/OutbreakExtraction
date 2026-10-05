@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a862adfe2140ff9ec2ba49ce235c35, type: 3}
+  m_Name: DebugExtendedMagazine
+  m_EditorClassIdentifier: 
+  item: {fileID: 11400000, guid: 24cc99705496a3e4c97d77bd34da8eb4, type: 2}
+  slot: 2
+  compatibleClasses: 3
+  compatibleWeaponIds: []
+  modifiers:
+    recoilVertical:
+      additive: 0
+      multiplier: 1
+    recoilHorizontal:
+      additive: 0
+      multiplier: 1
+    hipSpread:
+      additive: 0
+      multiplier: 1
+    adsSpread:
+      additive: 0
+      multiplier: 1
+    adsSpeed:
+      additive: 0
+      multiplier: 1
+    reloadDuration:
+      additive: 0
+      multiplier: 1.1
+    magazineCapacity:
+      additive: 0
+      multiplier: 1.5
+    noise:
+      additive: 0
+      multiplier: 1
+    muzzleFlash:
+      additive: 0
+      multiplier: 1
+  visualPrefab: {fileID: 4227650861969978992, guid: d6548b931f618a746b7f3d05e6ea185b,
+    type: 3}
+  suppressesFireSound: 0

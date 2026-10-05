@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a862adfe2140ff9ec2ba49ce235c35, type: 3}
+  m_Name: DebugVerticalGrip
+  m_EditorClassIdentifier: 
+  item: {fileID: 11400000, guid: 488f441349ac4f144aa08602ba2e6de7, type: 2}
+  slot: 3
+  compatibleClasses: 2
+  compatibleWeaponIds: []
+  modifiers:
+    recoilVertical:
+      additive: 0
+      multiplier: 0.85
+    recoilHorizontal:
+      additive: 0
+      multiplier: 0.8
+    hipSpread:
+      additive: 0
+      multiplier: 0.9
+    adsSpread:
+      additive: 0
+      multiplier: 1
+    adsSpeed:
+      additive: 0
+      multiplier: 0.92
+    reloadDuration:
+      additive: 0
+      multiplier: 1
+    magazineCapacity:
+      additive: 0
+      multiplier: 1
+    noise:
+      additive: 0
+      multiplier: 1
+    muzzleFlash:
+      additive: 0
+      multiplier: 1
+  visualPrefab: {fileID: 6370347812420082540, guid: 9b0978bc0141a134a9e9413dc0320343,
+    type: 3}
+  suppressesFireSound: 0

@@ -1,0 +1,5 @@
+{
+  "name": "Outbreak.FPS.Tests",
+  "references": ["Outbreak.Game", "Outbreak.Bodycam"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

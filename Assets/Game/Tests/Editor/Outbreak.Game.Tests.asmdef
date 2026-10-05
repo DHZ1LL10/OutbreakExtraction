@@ -1,0 +1,6 @@
+{
+  "name": "Outbreak.Game.Tests",
+  "references": ["Outbreak.Game"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

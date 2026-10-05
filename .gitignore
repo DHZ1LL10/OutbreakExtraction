@@ -1,0 +1,29 @@
+# Unity generated folders (project root)
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+
+# IDE generated files
+.vs/
+.vscode/
+.idea/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+
+# OS and crash logs
+.DS_Store
+Thumbs.db
+sysinfo.txt
+*.stackdump
+
+# Assets (including .meta), Packages and ProjectSettings are versioned.

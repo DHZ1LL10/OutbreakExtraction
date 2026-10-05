@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a862adfe2140ff9ec2ba49ce235c35, type: 3}
+  m_Name: DebugRedDot
+  m_EditorClassIdentifier: 
+  item: {fileID: 11400000, guid: 16eb82e0882c5fb498921c368a223fe1, type: 2}
+  slot: 0
+  compatibleClasses: 3
+  compatibleWeaponIds: []
+  modifiers:
+    recoilVertical:
+      additive: 0
+      multiplier: 1
+    recoilHorizontal:
+      additive: 0
+      multiplier: 1
+    hipSpread:
+      additive: 0
+      multiplier: 1
+    adsSpread:
+      additive: 0
+      multiplier: 0.85
+    adsSpeed:
+      additive: 0
+      multiplier: 1
+    reloadDuration:
+      additive: 0
+      multiplier: 1
+    magazineCapacity:
+      additive: 0
+      multiplier: 1
+    noise:
+      additive: 0
+      multiplier: 1
+    muzzleFlash:
+      additive: 0
+      multiplier: 1
+  visualPrefab: {fileID: 4937518590199081426, guid: 3a7907bef1868db4485e11cd76e8d0b4,
+    type: 3}
+  suppressesFireSound: 0

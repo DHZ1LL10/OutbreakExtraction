@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5274421ca204d97a1b1c6936fd42111, type: 3}
+  m_Name: DebugRifle
+  m_EditorClassIdentifier: 
+  item: {fileID: 11400000, guid: 054b6f80851a91e42af67fa508835cfc, type: 2}
+  ammoType: {fileID: 11400000, guid: 142ea5528121d704ea20e2169a048f1d, type: 2}
+  weaponClass: 1
+  damage: 24
+  headshotMultiplier: 2
+  fireRate: 600
+  fireMode: 1
+  allowModeSwitch: 1
+  magazineCapacity: 30
+  reloadDuration: 2.2
+  range: 150
+  hipSpread: 1.6
+  adsSpread: 0.07
+  recoilVertical: 0.7
+  recoilHorizontal: 0.16
+  recoilRecovery: 3
+  adsFov: 55
+  adsSpeed: 12
+  movementSpreadMultiplier: 1.5
+  crouchSpreadMultiplier: 0.7
+  airSpreadMultiplier: 2
+  sprintRestriction: 1
+  visualKick: 0.025
+  visualRotation: 2.4
+  cameraKick: 0.24

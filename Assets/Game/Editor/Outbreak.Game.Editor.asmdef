@@ -1,0 +1,5 @@
+{
+  "name": "Outbreak.Game.Editor",
+  "references": ["Outbreak.Game"],
+  "includePlatforms": ["Editor"]
+}
