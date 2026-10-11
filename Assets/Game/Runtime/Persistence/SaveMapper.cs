@@ -19,7 +19,7 @@ namespace Outbreak.Persistence
                 stashCapacity = profile.Stash.Capacity,
                 stash = new List<StackData>(), equipment = new List<EquipmentData>(),
                 ownedWeapons = new List<StackData>(), ownedAttachments = new List<StackData>(),
-                quests = new List<QuestProgress>()
+                quests = new List<QuestProgress>(), weaponAttachments = new List<WeaponAttachmentData>()
             };
             foreach (var stack in profile.Stash.Slots)
             {
@@ -32,6 +32,8 @@ namespace Outbreak.Persistence
                 AddOwnership(data, pair.Value);
             }
             foreach (var quest in profile.Quests) data.quests.Add(quest.Copy());
+            foreach (var pair in profile.WeaponAttachments)
+                data.weaponAttachments.Add(new WeaponAttachmentData { weaponId = pair.Key, attachmentItemIds = (string[])pair.Value.Clone() });
             return data;
         }
 
@@ -62,6 +64,17 @@ namespace Outbreak.Persistence
                     throw new ArgumentException("Invalid quest progress.");
                 profile.Quests.Add(quest.Copy());
             }
+            if (data.weaponAttachments != null)
+                foreach (var preset in data.weaponAttachments)
+                {
+                    if (preset == null || catalog.Get(preset.weaponId).Type != ItemType.Weapon ||
+                        preset.attachmentItemIds == null || preset.attachmentItemIds.Length > 4 || profile.WeaponAttachments.ContainsKey(preset.weaponId))
+                        throw new ArgumentException("Invalid weapon attachment preset.");
+                    var ids = new HashSet<string>();
+                    foreach (string id in preset.attachmentItemIds)
+                        if (!ids.Add(id) || catalog.Get(id).Type != ItemType.Attachment) throw new ArgumentException("Invalid attachment identity.");
+                    profile.WeaponAttachments.Add(preset.weaponId, (string[])preset.attachmentItemIds.Clone());
+                }
             var expected = Capture(profile);
             ValidateOwnership(data.ownedWeapons, expected.ownedWeapons);
             ValidateOwnership(data.ownedAttachments, expected.ownedAttachments);

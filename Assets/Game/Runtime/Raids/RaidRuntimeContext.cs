@@ -11,7 +11,7 @@ namespace Outbreak.Raids
         [SerializeField] private RaidMapDefinition map;
         [SerializeField, Min(1)] private int debugBackpackCapacity = 16;
         [SerializeField] private bool startRaidOnAwake = true;
-        public GameFlow Flow => gameManager != null ? gameManager.Flow : null;
+        public GameFlow Flow => GameManager.Persistent != null ? GameManager.Persistent.Flow : gameManager != null ? gameManager.Flow : null;
         public RaidSession Session => Flow != null ? Flow.Session : null;
         public RaidMapDefinition Map => Session != null ? Session.Map : map;
         public float RaidStartedAt { get; private set; }
@@ -19,6 +19,8 @@ namespace Outbreak.Raids
 
         private void Start()
         {
+            if (GameManager.Persistent != null && Flow?.State == GameState.Raid)
+            { RaidStartedAt = Time.unscaledTime; return; }
             if (gameManager == null) gameManager = FindFirstObjectByType<GameManager>();
             if (startRaidOnAwake && Flow != null && Flow.State == GameState.Hub)
             {

@@ -42,6 +42,25 @@ namespace Outbreak.Core
             if (State != GameState.Hub) return Reject("Saving manually is only allowed in Hub.");
             return Persist(Profile);
         }
+        // Hub stations commit existing domain operations and their save atomically.
+        public bool CommitHubChange(Func<GameFlow, bool> operation)
+        {
+            if (State != GameState.Hub || operation == null) return Reject("Hub operation unavailable.");
+            var before = CloneProfile();
+            string previousMessage = LastMessage;
+            try
+            {
+                if (!operation(this))
+                {
+                    Profile = before;
+                    if (LastMessage == previousMessage) LastMessage = "Hub operation rejected.";
+                    return false;
+                }
+                if (Persist(Profile)) return true;
+                Profile = before; return false;
+            }
+            catch { Profile = before; throw; }
+        }
         public bool Load()
         {
             if (State != GameState.Hub) return Reject("Loading is only allowed in Hub.");
@@ -118,6 +137,13 @@ namespace Outbreak.Core
             if (State != GameState.RaidSuccess && State != GameState.RaidFailed) return Reject("Raid must end before returning to Hub.");
             State = GameState.Hub;
             return true;
+        }
+        public bool ReturnToHubAndSave()
+        {
+            var previous = State;
+            if (!ReturnToHub()) return false;
+            if (Save()) return true;
+            State = previous; return false;
         }
         private PlayerProfile CloneProfile() => SaveMapper.Restore(SaveMapper.Capture(Profile), catalog);
         private bool Persist(PlayerProfile profile)

@@ -49,7 +49,15 @@ namespace Outbreak.Raids
             }
             if (Input.GetKeyDown(KeyCode.H) && context?.Flow != null &&
                 (context.Flow.State == GameState.RaidSuccess || context.Flow.State == GameState.RaidFailed))
-                context.Flow.ReturnToHub();
+                ReturnToHub();
+        }
+        private void ReturnToHub()
+        {
+            if (Outbreak.Hub.HubSceneFlow.Instance != null)
+            {
+                if (!Outbreak.Hub.HubSceneFlow.Instance.ReturnToHub()) Message(Outbreak.Hub.HubSceneFlow.Instance.Message);
+            }
+            else context.Flow.ReturnToHub();
         }
         private void SetInventory(bool value)
         {
@@ -159,11 +167,17 @@ namespace Outbreak.Raids
                 GUI.Label(new Rect(panel.x + 22, panel.yMax - 96, 410, 24), $"Stash after save: {context.Flow.Profile.Stash.Slots.Count} / {context.Flow.Profile.Stash.Capacity} slots");
                 GUI.Label(new Rect(panel.x + 22, panel.yMax - 72, 410, 24), $"Raid time: {zone.RaidDuration:0.0}s");
             }
-            GUI.Label(new Rect(panel.x + 22, panel.yMax - 45, 410, 25), "H — Return to Hub (logical/debug)");
+            if (Outbreak.Hub.HubSceneFlow.Instance != null)
+            { if (GUI.Button(new Rect(panel.x + 22, panel.yMax - 45, 410, 27), "Return To Hub (H)")) ReturnToHub(); }
+            else GUI.Label(new Rect(panel.x + 22, panel.yMax - 45, 410, 25), "H — Return to Hub (logical/debug)");
         }
         private void DrawFailure()
         {
-            GUI.Box(new Rect(Screen.width / 2f - 180, Screen.height / 2f + 80, 360, 70), "RAID FAILED\nLoot and deployed equipment lost\nH — Return to Hub");
+            // Result actions must remain readable above the completed bodycam death fade.
+            int depth = GUI.depth; GUI.depth = -10001;
+            GUI.Box(new Rect(Screen.width / 2f - 180, Screen.height / 2f + 80, 360, 100), "RAID FAILED\nLoot and deployed equipment lost\nH — Return to Hub");
+            if (Outbreak.Hub.HubSceneFlow.Instance != null && GUI.Button(new Rect(Screen.width / 2f - 165, Screen.height / 2f + 145, 330, 27), "Return To Hub")) ReturnToHub();
+            GUI.depth = depth;
         }
     }
 }

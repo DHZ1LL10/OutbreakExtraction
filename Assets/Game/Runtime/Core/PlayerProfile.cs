@@ -15,6 +15,8 @@ namespace Outbreak.Core
         public int Level { get; private set; }
         public int XP { get; private set; }
         public List<QuestProgress> Quests { get; } = new List<QuestProgress>();
+        // Configuration presets keyed by the existing weapon ItemDefinition ID; no physical ownership here.
+        public Dictionary<string, string[]> WeaponAttachments { get; } = new Dictionary<string, string[]>(StringComparer.Ordinal);
 
         public PlayerProfile(int stashCapacity = 64, int money = 0, int level = 1, int xp = 0)
         {

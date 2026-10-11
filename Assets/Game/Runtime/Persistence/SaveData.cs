@@ -18,6 +18,12 @@ namespace Outbreak.Persistence
         public StackData stack;
     }
     [Serializable]
+    public sealed class WeaponAttachmentData
+    {
+        public string weaponId;
+        public string[] attachmentItemIds;
+    }
+    [Serializable]
     public sealed class SaveData
     {
         public string format;
@@ -32,5 +38,7 @@ namespace Outbreak.Persistence
         public List<StackData> ownedWeapons;
         public List<StackData> ownedAttachments;
         public List<QuestProgress> quests;
+        // Optional in version 1: older saves load with no weapon presets.
+        public List<WeaponAttachmentData> weaponAttachments;
     }
 }

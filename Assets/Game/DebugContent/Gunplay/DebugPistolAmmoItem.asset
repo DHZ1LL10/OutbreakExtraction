@@ -11,12 +11,12 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 628de60d4795315478a08e1b1caeddbd, type: 3}
   m_Name: DebugPistolAmmoItem
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   id: debug_pistol_ammo
   displayName: DebugPistolAmmo
-  description: 
+  description:
   type: 1
   rarity: 0
-  buyValue: 0
-  sellValue: 0
+  buyValue: 2
+  sellValue: 1
   maxStack: 120
