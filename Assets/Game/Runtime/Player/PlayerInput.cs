@@ -27,6 +27,7 @@ namespace Outbreak.Player
         public bool SlowWalkHeld { get; private set; }
         public float LeanInput { get; private set; }
         public bool ControlEnabled { get; private set; } = true;
+        public bool InteractionFocused { get; private set; }
         public bool HasControl => ControlEnabled && Application.isFocused && Cursor.lockState == CursorLockMode.Locked;
 
         private void Start() { if (lockCursorOnStart) CaptureCursor(); }
@@ -52,8 +53,9 @@ namespace Outbreak.Player
             SprintHeld = Input.GetKey(sprintKey);
             CrouchHeld = Input.GetKey(crouchKey);
             SlowWalkHeld = Input.GetKey(slowWalkKey);
-            LeanInput = (Input.GetKey(leanRightKey) ? 1 : 0) - (Input.GetKey(leanLeftKey) ? 1 : 0);
+            LeanInput = (Input.GetKey(leanRightKey) && !InteractionFocused ? 1 : 0) - (Input.GetKey(leanLeftKey) ? 1 : 0);
         }
+        public void SetInteractionFocused(bool value) => InteractionFocused = value;
         public void SetControlEnabled(bool value)
         {
             ControlEnabled = value;

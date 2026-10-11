@@ -11,5 +11,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Game/Scenes/Infected_Test.unity
     guid: 61238effa879dba40bfa3fdfac5d2d28
+  - enabled: 1
+    path: Assets/Game/Scenes/RaidLoop_Test.unity
+    guid: 4db38e30603308a46be22c617f3404e1
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

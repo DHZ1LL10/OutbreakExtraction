@@ -18,6 +18,15 @@ namespace Outbreak.Editor
     public static class InfectedTestEnvironment
     {
         private const string Content = "Assets/Game/DebugContent/Infected";
+        public static InfectedController EnsureDebugPrefab(bool runnerVariant)
+        {
+            Folder("Assets/Game", "DebugContent"); Folder("Assets/Game/DebugContent", "Infected");
+            var shader = Shader.Find("Universal Render Pipeline/Lit");
+            if (shader == null) throw new InvalidOperationException("Infected test requires URP/Lit.");
+            var body = Material(runnerVariant ? "Runner" : "Normal", runnerVariant ? new Color(0.7f, 0.25f, 0.08f) : new Color(0.35f, 0.5f, 0.18f), shader);
+            var head = Material("Head", new Color(0.6f, 0.68f, 0.38f), shader);
+            return Prefab(runnerVariant ? "DebugRunner" : "DebugInfected", runnerVariant, body, head);
+        }
         [MenuItem("Outbreak/Crear entorno de prueba Infected")]
         public static void Create()
         {

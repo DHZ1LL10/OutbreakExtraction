@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7426f11734f25544aae55519aa0c121e, type: 3}
+  m_Name: ToolboxLoot
+  m_EditorClassIdentifier: 
+  entries:
+  - item: {fileID: 11400000, guid: f19431486e00e2a4c82957b5ce67832f, type: 2}
+    weight: 7
+    minQuantity: 1
+    maxQuantity: 3
+  - item: {fileID: 11400000, guid: 00f8fe276cf86774b872dd05fc821182, type: 2}
+    weight: 4
+    minQuantity: 1
+    maxQuantity: 12
+  - item: {fileID: 11400000, guid: 44e0c08fcd243db45b5e6bc70f3d6f34, type: 2}
+    weight: 0.8
+    minQuantity: 1
+    maxQuantity: 1
+  dropChance: 1
+  restrictRarity: 0
+  minimumRarity: 0
+  maximumRarity: 5
