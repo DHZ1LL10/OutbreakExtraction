@@ -28,6 +28,22 @@ namespace Outbreak.Tests
             fields?.Dispose();
             if (scene.IsValid()) EditorSceneManager.ClosePreviewScene(scene);
         }
+        [TestCase(true)] [TestCase(false)]
+        public void AdsHidesCrosshairButKeepsHitmarkerForBothWeapons(bool primary)
+        {
+            typeof(FirearmController).GetMethod("EquipDefinitions", PrivateInstance).Invoke(firearm,
+                new object[] { Reference<WeaponDefinition>("primary"), Reference<WeaponDefinition>("secondary"), 180, 75 });
+            var selection = (WeaponSelection)typeof(FirearmController).GetField("selection", PrivateInstance).GetValue(firearm);
+            if (!primary) { selection.Select(false, 0); selection.Tick(1); }
+            var overlay = firearm.GetComponent<WeaponDebugOverlay>(); Assert.IsNotNull(overlay);
+            typeof(WeaponDebugOverlay).GetMethod("Awake", PrivateInstance).Invoke(overlay, null);
+            Assert.IsTrue(overlay.CrosshairVisible);
+            firearm.Current.SetAim(true); Assert.IsFalse(overlay.CrosshairVisible);
+            typeof(WeaponDebugOverlay).GetMethod("Hit", PrivateInstance).Invoke(overlay,
+                new object[] { new DamageInfo(1, Vector3.zero, Vector3.up, null) });
+            Assert.IsTrue(overlay.HitmarkerVisible); Assert.IsFalse(overlay.CrosshairVisible);
+            firearm.Current.SetAim(false); Assert.IsTrue(overlay.CrosshairVisible); Assert.IsTrue(overlay.HitmarkerVisible);
+        }
         private T Reference<T>(string field) where T : Object => fields.FindProperty(field).objectReferenceValue as T;
 
         [Test] public void SavedLoadoutHasPersistentDefinitionsAndMatchingViews()

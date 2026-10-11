@@ -4,6 +4,11 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Outbreak.Core;
+using Outbreak.Combat;
+using Outbreak.Interaction;
+using Outbreak.Infected;
+using Outbreak.Player;
+using Outbreak.Weapons;
 using Outbreak.Inventory;
 using Outbreak.Items;
 using Outbreak.Loot;
@@ -35,6 +40,108 @@ namespace Outbreak.Tests
             Assert.AreEqual(1, calls); Assert.AreEqual(1, state.Contents.Count);
             Assert.IsTrue(state.TryTake(0, setup.flow.Session)); Assert.IsEmpty(state.Contents);
             Assert.AreEqual(1, setup.flow.Session.FoundLoot.Sum(x => x.Quantity));
+        }
+
+        private static void Invoke(object target, string method, params object[] args) => target.GetType().GetMethod(method, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(target, args);
+        private GameObject Go(string name) { var go = new GameObject(name); objects.Add(go); return go; }
+        private (PlayerInput input, PlayerInteractor interactor, LootContainer container) Panel()
+        {
+            var player = Go("player"); var input = player.AddComponent<PlayerInput>(); var interactor = player.AddComponent<PlayerInteractor>();
+            Invoke(interactor, "Awake");
+            var container = Go("container").AddComponent<LootContainer>(); container.transform.position = Vector3.forward * 2;
+            return (input, interactor, container);
+        }
+        [Test] public void LootPanelSuppressesMouseAndRestoresGameplayOnClose()
+        {
+            var p = Panel(); p.interactor.OpenPanel(p.container);
+            Assert.IsTrue(p.input.GameplaySuppressed); Assert.IsFalse(p.input.HasControl);
+            Assert.AreEqual(CursorLockMode.None, Cursor.lockState); Assert.IsTrue(Cursor.visible);
+            p.input.CaptureCursor(); Assert.AreEqual(CursorLockMode.None, Cursor.lockState);
+            p.interactor.ClosePanel(); Assert.IsFalse(p.input.GameplaySuppressed); Assert.IsNull(p.interactor.ActivePanel);
+            Assert.IsFalse(p.input.FireHeld); Assert.AreEqual(Vector2.zero, p.input.LookInput);
+        }
+        [Test] public void SuppressionOwnersDoNotReleaseEachOthersModal()
+        {
+            var p = Panel(); object inventory = new object(); p.input.SetGameplaySuppressed(inventory, true);
+            p.interactor.OpenPanel(p.container); p.interactor.ClosePanel(); Assert.IsTrue(p.input.GameplaySuppressed);
+            p.input.SetGameplaySuppressed(inventory, false); Assert.IsFalse(p.input.GameplaySuppressed);
+        }
+        [Test] public void LootDistanceUsesHysteresisAndClosesWithoutAiming()
+        {
+            var p = Panel(); p.container.transform.position = Vector3.forward * 2.8f;
+            Assert.IsFalse(p.container.CanOpen(p.interactor)); Assert.IsTrue(p.container.CanStayOpen(p.interactor));
+            p.container.transform.position = Vector3.forward * 2; p.interactor.OpenPanel(p.container);
+            p.interactor.transform.position = Vector3.back * 2; p.interactor.ValidatePanel();
+            Assert.IsNull(p.interactor.ActivePanel); Assert.IsFalse(p.input.GameplaySuppressed);
+        }
+        [Test] public void DisabledAndDestroyedContainersCloseCleanly()
+        {
+            var p = Panel(); p.interactor.OpenPanel(p.container); p.container.enabled = false; p.interactor.ValidatePanel();
+            Assert.IsNull(p.interactor.ActivePanel); p.container.enabled = true; p.interactor.OpenPanel(p.container);
+            UnityEngine.Object.DestroyImmediate(p.container.gameObject); Assert.DoesNotThrow(p.interactor.ValidatePanel);
+            Assert.IsNull(p.interactor.ActivePanel); Assert.IsFalse(p.input.GameplaySuppressed);
+        }
+        [Test] public void ClosingPanelCannotReenableDeadPlayersControls()
+        {
+            var p = Panel(); p.interactor.OpenPanel(p.container); p.input.SetControlEnabled(false); p.interactor.ValidatePanel();
+            Assert.IsFalse(p.input.ControlEnabled); Assert.IsFalse(p.input.HasControl); Assert.IsNull(p.interactor.ActivePanel);
+        }
+        [Test] public void LeanEOnlyConflictsWithFocusedInteractionOrModal()
+        {
+            Assert.AreEqual(1, PlayerInput.ResolveLean(false, true, false, false));
+            Assert.AreEqual(0, PlayerInput.ResolveLean(false, true, true, false));
+            Assert.AreEqual(0, PlayerInput.ResolveLean(false, true, false, true));
+            Assert.AreEqual(-1, PlayerInput.ResolveLean(true, false, true, false));
+        }
+        [Test] public void ExtractionAutomaticallyStartsCompletesAndCannotRepeat()
+        {
+            var timer = new ExtractionCountdown(5);
+            Assert.IsFalse(timer.Tick(10, true, true, true)); Assert.IsTrue(timer.Running);
+            Assert.IsFalse(timer.Tick(14.9, true, true, true)); Assert.IsTrue(timer.Tick(15, true, true, true));
+            Assert.IsTrue(timer.Completed); Assert.IsFalse(timer.Tick(20, true, true, true));
+            Assert.IsFalse(typeof(IInteractable).IsAssignableFrom(typeof(ExtractionZone)));
+        }
+        [TestCase(false, true, true)] [TestCase(true, false, true)] [TestCase(true, true, false)]
+        public void ExtractionExitDeathAndInactiveRaidResetCountdown(bool inside, bool alive, bool active)
+        {
+            var timer = new ExtractionCountdown(5); timer.Tick(0, true, true, true);
+            Assert.IsFalse(timer.Tick(4, inside, alive, active)); Assert.IsFalse(timer.Running); Assert.AreEqual(5, timer.Remaining(4));
+            timer.Tick(6, true, true, true); Assert.IsFalse(timer.Tick(10, true, true, true)); Assert.IsTrue(timer.Tick(11, true, true, true));
+        }
+        [Test] public void AutomaticZoneTransfersLootWithoutInteractorOrKey()
+        {
+            var item = Item("auto", 5); var setup = Raid(4, item); setup.flow.Session.AddLoot(new[] { new ItemStack(item, 2) });
+            var manager = Go("manager").AddComponent<GameManager>();
+            typeof(GameManager).GetField("<Flow>k__BackingField", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).SetValue(manager, setup.flow);
+            var context = Go("context").AddComponent<RaidRuntimeContext>(); Set(context, "gameManager", manager);
+            var player = Go("player"); var health = player.AddComponent<PlayerHealth>(); var collider = player.AddComponent<CapsuleCollider>();
+            var zoneObject = Go("zone"); zoneObject.AddComponent<BoxCollider>(); var zone = zoneObject.AddComponent<ExtractionZone>(); Set(zone, "raidContext", context);
+            Invoke(zone, "Awake"); Invoke(zone, "OnTriggerEnter", collider); zone.Tick(0);
+            Assert.IsTrue(zone.IsCountingDown); Assert.AreEqual(5, zone.Remaining); Assert.AreEqual(0, zone.Progress);
+            zone.Tick(2.5); Assert.AreEqual(2.5f, zone.Remaining); Assert.AreEqual(0.5f, zone.Progress);
+            Invoke(zone, "OnTriggerExit", collider); Assert.IsFalse(zone.IsCountingDown); Assert.AreEqual(5, zone.Remaining);
+            Invoke(zone, "OnTriggerStay", collider); zone.Tick(3); Assert.AreEqual(5, zone.Remaining);
+            zone.Tick(8);
+            Assert.IsTrue(zone.Succeeded); Assert.AreEqual(GameState.RaidSuccess, setup.flow.State); Assert.AreEqual(2, setup.flow.Profile.Stash.GetItemCount(item.Id));
+            zone.Tick(10); Assert.AreEqual(2, setup.flow.Profile.Stash.GetItemCount(item.Id));
+        }
+        [Test] public void TakeAllRejectsWholeStackWithoutPartialLossAndReopenDoesNotReroll()
+        {
+            var item = Item("atomic", 5); var setup = Raid(1, item); setup.flow.Session.AddLoot(new[] { new ItemStack(item, 4) });
+            var state = new LootContainerInventory(); state.EnsureGenerated(() => new[] { new ItemStack(item, 2) });
+            Assert.AreEqual(0, state.TryTakeAll(setup.flow.Session)); Assert.AreEqual(2, state.Contents[0].Quantity);
+            state.EnsureGenerated(() => throw new Exception("Must not reroll"));
+            setup.flow.Session.RemoveLoot(item.Id, 1); Assert.IsTrue(state.TryTake(0, setup.flow.Session)); Assert.IsEmpty(state.Contents);
+            Assert.AreEqual(5, setup.flow.Session.FoundLoot.Sum(x => x.Quantity));
+        }
+        [TestCase(WanderProfile.Active)] [TestCase(WanderProfile.Passive)] [TestCase(WanderProfile.IdleProne)]
+        public void WanderProfilesHaveValidRangesAndPreserveCombat(WanderProfile profile)
+        {
+            var settings = new InfectedSettings(); float speed = settings.chaseSpeed, damage = settings.attackDamage;
+            settings.ApplyWanderProfile(profile);
+            Assert.Greater(settings.idleMinimum, 0); Assert.GreaterOrEqual(settings.idleMaximum, settings.idleMinimum);
+            Assert.Greater(settings.wanderRadius, 0); Assert.GreaterOrEqual(settings.wanderDelayMaximum, settings.wanderDelayMinimum);
+            Assert.AreEqual(speed, settings.chaseSpeed); Assert.AreEqual(damage, settings.attackDamage);
         }
 
         [Test] public void TakeAllTakesWhatFitsAndLeavesRejectedLoot()

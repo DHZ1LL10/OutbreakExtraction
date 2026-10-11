@@ -29,6 +29,8 @@ namespace Outbreak.Editor
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) { Debug.LogWarning("Sal de Play antes de crear RaidLoop_Test."); return; }
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            if (AssetDatabase.LoadAssetAtPath<SceneAsset>("Assets/Game/Scenes/RaidLoop_Test.unity") != null &&
+                !EditorUtility.DisplayDialog("RaidLoop_Test", "Regenerar reemplaza la escena existente. Para conservar tus cambios, usa Outbreak > Actualizar Raid Loop a Fase 5.1.", "Regenerar", "Cancelar")) return;
             Folder("Assets/Game", "Scenes"); Folder("Assets/Game", "DebugContent"); Folder("Assets/Game/DebugContent", "RaidLoop");
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             // NewScene unloads unused native assets, so create/load persistent debug content after it.
@@ -59,7 +61,7 @@ namespace Outbreak.Editor
             Box("East lane", geometry, new Vector3(7, 1.7f, 38), new Vector3(0.5f, 3.4f, 14), wall);
             Label("SAFE SPAWN", new Vector3(0, 2.4f, -20));
             Label("LOOT BUILDING", new Vector3(-11, 3, 8));
-            Label("EXTRACTION — HOLD E", new Vector3(0, 2.4f, 48));
+
 
             var surface = geometry.gameObject.AddComponent<NavMeshSurface>();
             surface.collectObjects = CollectObjects.Children; surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders; surface.BuildNavMesh();
@@ -88,7 +90,7 @@ namespace Outbreak.Editor
             Pickup("Rare Radio", content.items[3], 1, new Vector3(10, 0.3f, 30), pickup);
 
             var extract = Box("Extraction Zone", null, new Vector3(0, 0.08f, 48), new Vector3(8, 0.16f, 7), extraction);
-            extract.AddComponent<ExtractionZone>();
+            extract.AddComponent<ExtractionZone>().ConfigureTrigger(context);
 
             var spawner = new GameObject("Infected spawns").AddComponent<InfectedSpawner>();
             Reference(spawner, "normalPrefab", InfectedTestEnvironment.EnsureDebugPrefab(false));
@@ -101,6 +103,9 @@ namespace Outbreak.Editor
                 var point = new GameObject("Spawn " + (i + 1)).transform; point.SetParent(spawner.transform, false); point.position = hit.position;
                 points.GetArrayElementAtIndex(i).objectReferenceValue = point;
             }
+            spawnerSo.FindProperty("variedWander").boolValue = true;
+            spawnerSo.FindProperty("deathLootTable").objectReferenceValue = Table("InfectedScrapLoot", new[] { content.items[0] }, new[] { 1f });
+            spawnerSo.FindProperty("dropChance").floatValue = 0.3f;
             spawnerSo.ApplyModifiedPropertiesWithoutUndo();
 
             var light = new GameObject("Directional Light").AddComponent<Light>(); light.type = LightType.Directional;
@@ -113,7 +118,39 @@ namespace Outbreak.Editor
             var scenes = EditorBuildSettings.scenes.ToList();
             if (!scenes.Any(x => x.path == path)) { scenes.Add(new EditorBuildSettingsScene(path, true)); EditorBuildSettings.scenes = scenes.ToArray(); }
             Selection.activeGameObject = player; AssetDatabase.SaveAssets();
-            Debug.Log("[Raid Loop] RaidLoop_Test ready. E interact/hold extraction, Tab backpack, 1/2 weapons, F1-F4 attachments. Loot persists per container; success saves to raidloop_profile.json.", player);
+            Debug.Log("[Raid Loop] RaidLoop_Test ready. E interact/lean, automatic 5s extraction, Tab backpack, 1/2 weapons, F1-F4 attachments. Loot persists per container; success saves to raidloop_profile.json.", player);
+        }
+
+        [MenuItem("Outbreak/Actualizar Raid Loop a Fase 5.1")]
+        public static void UpgradeCurrentScene()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode || UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "RaidLoop_Test")
+            { Debug.LogWarning("Abre RaidLoop_Test fuera de Play antes de actualizar."); return; }
+            var context = Object.FindObjectsByType<RaidRuntimeContext>(FindObjectsSortMode.None)
+                .FirstOrDefault(x => x.gameObject.scene == UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+            foreach (var zone in Object.FindObjectsByType<ExtractionZone>(FindObjectsSortMode.None))
+            {
+                if (zone.gameObject.scene != UnityEngine.SceneManagement.SceneManager.GetActiveScene()) continue;
+                Undo.RecordObject(zone, "Automatic extraction");
+                Undo.RecordObject(zone.GetComponent<Collider>(), "Extraction trigger volume");
+                zone.ConfigureTrigger(context);
+                EditorUtility.SetDirty(zone); EditorUtility.SetDirty(zone.GetComponent<Collider>());
+                var so = new SerializedObject(zone); so.FindProperty("extractionDuration").floatValue = 5; so.ApplyModifiedProperties();
+            }
+            foreach (var label in Object.FindObjectsByType<TextMesh>(FindObjectsSortMode.None))
+                if (label.text == "EXTRACTION — HOLD E") { Undo.RecordObject(label.gameObject, "Hide old extraction label"); label.gameObject.SetActive(false); }
+            var scrap = AssetDatabase.LoadAssetAtPath<ItemDefinition>(Content + "/Scrap.asset");
+            foreach (var spawner in Object.FindObjectsByType<InfectedSpawner>(FindObjectsSortMode.None))
+            {
+                Undo.RecordObject(spawner, "Varied wander");
+                var so = new SerializedObject(spawner); so.FindProperty("variedWander").boolValue = true;
+                if (scrap != null && so.FindProperty("deathLootTable").objectReferenceValue == null)
+                    so.FindProperty("deathLootTable").objectReferenceValue = Table("InfectedScrapLoot", new[] { scrap }, new[] { 1f });
+                so.ApplyModifiedProperties();
+            }
+            EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+            AssetDatabase.SaveAssets();
+            Debug.Log("[Raid Loop] Fase 5.1 applied. Geometry, navigation and manual scene changes preserved. Save the scene.");
         }
 
         private static (ItemCatalog catalog, RaidMapDefinition map, ItemDefinition[] items, LootTable[] tables) EnsureContent()

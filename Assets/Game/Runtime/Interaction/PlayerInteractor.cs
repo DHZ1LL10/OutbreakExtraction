@@ -31,7 +31,13 @@ namespace Outbreak.Interaction
         }
         private void Update()
         {
-            if (playerInput != null && !playerInput.HasControl) { SetFocus(null); CancelHold(); return; }
+            ValidatePanel();
+            if (ActivePanel != null)
+            {
+                if (Input.GetKeyDown(KeyCode.Escape)) ClosePanel();
+                SetFocus(null); playerInput?.SetInteractionFocused(false); CancelHold(); return;
+            }
+            if (playerInput != null && !playerInput.HasControl) { SetFocus(null); playerInput.SetInteractionFocused(false); CancelHold(); return; }
             IInteractable candidate = ResolveRaycastTarget();
             if (candidate == null && proximity != null && proximity.CanInteract(this)) candidate = proximity;
             SetFocus(candidate);
@@ -87,16 +93,29 @@ namespace Outbreak.Interaction
         }
         public void OpenPanel(IInteractionPanel panel)
         {
-            if (panel == null || !panel.IsAvailable) return;
-            ActivePanel = panel; CancelHold(); playerInput?.ReleaseCursor();
+            if (panel == null || !panel.IsAvailable || (panel is ISpatialInteractionPanel spatial && !spatial.CanOpen(this))) return;
+            if (ActivePanel != null) ClosePanel();
+            ActivePanel = panel; CancelHold(); SetFocus(null); playerInput?.SetInteractionFocused(false);
+            playerInput?.SetGameplaySuppressed(this, true);
         }
         public void ClosePanel()
         {
-            var panel = ActivePanel; ActivePanel = null; panel?.Closed(this); playerInput?.CaptureCursor();
+            if (ActivePanel == null) return;
+            var panel = ActivePanel; ActivePanel = null;
+            if (!(panel is UnityEngine.Object obj) || obj != null) panel.Closed(this);
+            playerInput?.SetGameplaySuppressed(this, false);
+        }
+        public void ValidatePanel()
+        {
+            var panel = ActivePanel;
+            if (panel == null) return;
+            bool destroyed = panel is UnityEngine.Object obj && obj == null;
+            if (destroyed || !panel.IsAvailable || (panel is ISpatialInteractionPanel spatial && !spatial.CanStayOpen(this)) ||
+                (raidContext != null && raidContext.Session?.IsActive != true) || (playerInput != null && !playerInput.ControlEnabled)) ClosePanel();
         }
         private void OnDisable()
         {
-            CancelHold(); playerInput?.SetInteractionFocused(false);
+            ClosePanel(); CancelHold(); playerInput?.SetInteractionFocused(false);
         }
     }
 }

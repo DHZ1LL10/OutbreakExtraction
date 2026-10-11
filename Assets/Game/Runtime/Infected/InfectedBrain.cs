@@ -3,12 +3,23 @@ using UnityEngine;
 
 namespace Outbreak.Infected
 {
+    public enum WanderProfile { Existing, Active, Passive, IdleProne }
     public enum InfectedState { Idle, Wander, Investigate, Chase, Attack, Stagger, Dead }
     [Serializable]
     public sealed class InfectedSettings
     {
         [Min(0.1f)] public float wanderSpeed = 0.8f, chaseSpeed = 2.4f;
         [Min(0.1f)] public float wanderRadius = 4;
+        [Min(0)] public float wanderDelayMinimum = 0.15f, wanderDelayMaximum = 0.65f;
+        public void ApplyWanderProfile(WanderProfile profile)
+        {
+            switch (profile)
+            {
+                case WanderProfile.Active: idleMinimum = 0.6f; idleMaximum = 1.8f; wanderRadius = 6; wanderDelayMinimum = 0.1f; wanderDelayMaximum = 0.4f; break;
+                case WanderProfile.Passive: idleMinimum = 1.8f; idleMaximum = 4; wanderRadius = 4.5f; wanderDelayMinimum = 0.2f; wanderDelayMaximum = 0.8f; break;
+                case WanderProfile.IdleProne: idleMinimum = 5; idleMaximum = 11; wanderRadius = 3; wanderDelayMinimum = 0.4f; wanderDelayMaximum = 1.2f; break;
+            }
+        }
         [Min(0.1f)] public float visionRange = 18, hearingRange = 35;
         [Range(10, 180)] public float visionAngle = 105;
         [Min(0.05f)] public float perceptionInterval = 0.15f, destinationInterval = 0.3f;

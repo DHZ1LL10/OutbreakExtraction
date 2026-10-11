@@ -3,6 +3,8 @@ using System.Reflection;
 using NUnit.Framework;
 using Outbreak.Cameras;
 using Outbreak.Player;
+using Outbreak.Combat;
+using Outbreak.Raids;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -60,6 +62,27 @@ namespace Outbreak.Tests
         {
             Object.Destroy(root);
             yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator CharacterControllerPhysicallyEntersAndLeavesExtractionTrigger()
+        {
+            motor.SetMotorEnabled(false);
+            player.AddComponent<PlayerHealth>();
+            var marker = Box("Legacy extraction marker", origin + Vector3.forward * 3 + Vector3.up * 0.08f, new Vector3(8, 0.16f, 7));
+            var zone = marker.AddComponent<ExtractionZone>();
+            var trigger = marker.GetComponent<BoxCollider>();
+            Assert.IsTrue(trigger.isTrigger); Assert.AreEqual(2.4f, trigger.bounds.size.y, 0.001f);
+            var occupants = (System.Collections.Generic.HashSet<Collider>)typeof(ExtractionZone)
+                .GetField("occupants", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(zone);
+            // Start outside, then use the real controller/physics callbacks; never inject OnTriggerEnter.
+            player.transform.position = origin + Vector3.back * 3 + Vector3.up * 0.03f;
+            Physics.SyncTransforms();
+            for (int i = 0; i < 40; i++) { controller.Move(new Vector3(0, -0.01f, 0.1f)); yield return new WaitForFixedUpdate(); }
+            Assert.IsTrue(occupants.Contains(controller));
+            yield return new WaitForFixedUpdate(); Assert.IsTrue(occupants.Contains(controller));
+            for (int i = 0; i < 40; i++) { controller.Move(new Vector3(0, -0.01f, -0.1f)); yield return new WaitForFixedUpdate(); }
+            Assert.IsFalse(occupants.Contains(controller));
         }
 
         [UnityTest]

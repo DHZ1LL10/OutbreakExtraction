@@ -13,6 +13,9 @@ namespace Outbreak.Infected
         [SerializeField, Min(0)] private int normalCount = 4, runnerCount = 2;
         [SerializeField, Min(1)] private int maximum = 6;
         [SerializeField] private bool debugRespawn;
+        [SerializeField] private bool variedWander;
+        [SerializeField] private Outbreak.Loot.LootTable deathLootTable;
+        [SerializeField, Range(0, 1)] private float dropChance = 0.3f;
         [SerializeField, Min(1)] private float respawnInterval = 12;
         private readonly List<InfectedController> spawned = new List<InfectedController>();
         private float nextRespawn;
@@ -40,7 +43,14 @@ namespace Outbreak.Infected
                 // Do not stack replacements on an occupied spawn.
                 if (Physics.CheckSphere(hit.position + Vector3.up * 0.9f, 0.4f, ~0, QueryTriggerInteraction.Ignore)) continue;
                 var infected = Instantiate(prefab, hit.position, point.rotation, transform);
-                infected.Initialize(player); spawned.Add(infected);
+                infected.Initialize(player);
+                if (variedWander) infected.settings.ApplyWanderProfile(i % 6 == 5 ? WanderProfile.IdleProne : i % 2 == 0 ? WanderProfile.Active : WanderProfile.Passive);
+                if (deathLootTable != null)
+                {
+                    var drop = infected.gameObject.AddComponent<InfectedLootDrop>();
+                    drop.Configure(deathLootTable, dropChance);
+                }
+                spawned.Add(infected);
             }
         }
     }

@@ -12,6 +12,8 @@ namespace Outbreak.Weapons
         private DebugAttachmentController attachments;
         private float hitUntil, dryUntil;
         private bool headshot;
+        public bool CrosshairVisible => showCrosshair && firearm != null && firearm.Current != null && !firearm.Current.IsAiming;
+        public bool HitmarkerVisible => showHitmarker && Time.unscaledTime < hitUntil;
         private void Awake() { firearm = GetComponent<FirearmController>(); attachments = GetComponent<DebugAttachmentController>(); }
         private void OnEnable() { firearm.OnHit += Hit; firearm.OnDryFire += Dry; }
         private void OnDisable() { firearm.OnHit -= Hit; firearm.OnDryFire -= Dry; }
@@ -38,7 +40,7 @@ namespace Outbreak.Weapons
             }
             Color previous = GUI.color;
             float x = Screen.width * 0.5f, y = Screen.height * 0.5f;
-            if (showCrosshair)
+            if (CrosshairVisible)
             {
                 float gap = Mathf.Lerp(7, 2, firearm.AimWeight);
                 GUI.DrawTexture(new Rect(x - gap - 5, y - 1, 5, 2), Texture2D.whiteTexture);
@@ -46,7 +48,7 @@ namespace Outbreak.Weapons
                 GUI.DrawTexture(new Rect(x - 1, y - gap - 5, 2, 5), Texture2D.whiteTexture);
                 GUI.DrawTexture(new Rect(x - 1, y + gap, 2, 5), Texture2D.whiteTexture);
             }
-            if (showHitmarker && Time.unscaledTime < hitUntil)
+            if (HitmarkerVisible)
             {
                 GUI.color = headshot ? Color.yellow : Color.white;
                 GUI.Label(new Rect(x - 5, y - 10, 24, 24), "X");

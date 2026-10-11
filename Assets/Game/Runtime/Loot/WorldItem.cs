@@ -14,6 +14,7 @@ namespace Outbreak.Loot
         public string Prompt => item == null ? "Pick Up" : "Pick Up " + item.DisplayName;
         public ItemDefinition Item => item;
         public int Quantity => quantity;
+        public void Initialize(ItemStack stack) { item = stack.Item; quantity = stack.Quantity; }
         public bool Collected { get; private set; }
         public bool CanInteract(PlayerInteractor interactor) => !Collected && item != null && interactor != null && interactor.RaidContext?.Session != null;
         public void Interact(PlayerInteractor interactor)

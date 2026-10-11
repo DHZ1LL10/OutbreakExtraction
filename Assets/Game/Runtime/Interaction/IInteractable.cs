@@ -20,4 +20,9 @@ namespace Outbreak.Interaction
         bool IsAvailable { get; }
         void Closed(PlayerInteractor interactor);
     }
+    public interface ISpatialInteractionPanel : IInteractionPanel
+    {
+        bool CanOpen(PlayerInteractor interactor);
+        bool CanStayOpen(PlayerInteractor interactor);
+    }
 }

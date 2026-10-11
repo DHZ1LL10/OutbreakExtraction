@@ -32,10 +32,10 @@ namespace Outbreak.Raids
         }
         private void Update()
         {
-            if (health != null && !health.IsAlive && (inventoryOpen || interactor.ActivePanel != null))
+            if (((health != null && !health.IsAlive) || context?.Flow?.State != GameState.Raid) && (inventoryOpen || interactor.ActivePanel != null))
             {
                 if (interactor.ActivePanel != null) interactor.ClosePanel();
-                SetInventory(false);
+                if (inventoryOpen) SetInventory(false);
             }
             if (Input.GetKeyDown(KeyCode.Tab) && health != null && health.IsAlive && context?.Flow?.State == GameState.Raid)
             {
@@ -45,7 +45,7 @@ namespace Outbreak.Raids
             if (Input.GetKeyDown(KeyCode.Escape) && (inventoryOpen || interactor.ActivePanel != null))
             {
                 if (interactor.ActivePanel != null) interactor.ClosePanel();
-                SetInventory(false);
+                if (inventoryOpen) SetInventory(false);
             }
             if (Input.GetKeyDown(KeyCode.H) && context?.Flow != null &&
                 (context.Flow.State == GameState.RaidSuccess || context.Flow.State == GameState.RaidFailed))
@@ -54,14 +54,21 @@ namespace Outbreak.Raids
         private void SetInventory(bool value)
         {
             inventoryOpen = value;
-            if (value) playerInput?.ReleaseCursor(); else playerInput?.CaptureCursor();
+            playerInput?.SetGameplaySuppressed(this, value);
         }
+        private void OnDisable() { if (inventoryOpen) SetInventory(false); }
         private void Message(string value) { feedback = value; feedbackUntil = Time.unscaledTime + 2f; }
         private void OnGUI()
         {
             var flow = context?.Flow;
             if (flow == null) return;
             DrawStatus(flow);
+            if (flow.State == GameState.Raid)
+                foreach (var zone in FindObjectsByType<ExtractionZone>(FindObjectsSortMode.None))
+                {
+                    if (zone.IsCountingDown) GUI.Box(new Rect(Screen.width / 2f - 125, 120, 250, 80), $"EXTRACTION\nHOLD POSITION\n{zone.Remaining:0.0}");
+                    else if (zone.CancelledRecently) GUI.Box(new Rect(Screen.width / 2f - 125, 120, 250, 35), "EXTRACTION CANCELLED");
+                }
             if (interactor.ActivePanel is LootContainer container) DrawContainer(container, flow.Session);
             else if (inventoryOpen) DrawInventory(flow.Session);
             if (flow.State == GameState.RaidSuccess) DrawResult();
@@ -72,7 +79,7 @@ namespace Outbreak.Raids
             GUI.Box(new Rect(12, 12, 355, 112), "RAID LOOP TEST");
             string hp = health == null ? "--" : $"{health.CurrentHealth:0} / {health.MaxHealth:0}";
             int used = flow.Session?.FoundLoot.Count ?? 0, capacity = flow.Session?.LootCapacity ?? 0;
-            GUI.Label(new Rect(24, 38, 330, 80), $"HP: {hp}\nLoot: {used} / {capacity} slots\nTab: raid inventory | E: interact / hold extract\nF1-F4 attachments | 1/2 weapons");
+            GUI.Label(new Rect(24, 38, 330, 80), $"HP: {hp}\nLoot: {used} / {capacity} slots\nTab: inventory | E: interact / lean right\nExtraction: hold position | F1-F4 attachments");
             if (interactor.ActivePanel == null && !inventoryOpen && interactor.Focused != null)
             {
                 string label = "[E] " + interactor.Focused.Prompt;

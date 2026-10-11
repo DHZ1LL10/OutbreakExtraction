@@ -19,7 +19,13 @@ namespace Outbreak.Infected
         private IDisposable noiseSubscription;
         private Vector3 goal, home, lastKnown;
         private float nextSense, nextDestination;
-        private bool visible, goalValid;
+        private bool visible, goalValid, wanderPending;
+        private float wanderSelectAt;
+        public void StopForRaidEnd()
+        {
+            if (agent.enabled && agent.isOnNavMesh) { agent.isStopped = true; agent.ResetPath(); }
+            enabled = false;
+        }
         public InfectedState State => brain != null ? brain.State : InfectedState.Idle;
         public PlayerHealth Target => target;
         public Vector3 Destination => goal;
@@ -60,10 +66,11 @@ namespace Outbreak.Infected
                 if (visible) lastKnown = target.transform.position;
             }
             if (State == InfectedState.Chase && visible) { goal = lastKnown; goalValid = true; }
-            bool arrived = !goalValid || (!agent.pathPending && Vector3.Distance(transform.position, goal) <= agent.stoppingDistance + 0.15f);
+            if (State == InfectedState.Wander && wanderPending && Time.time >= wanderSelectAt) SelectWanderDestination();
+            bool arrived = !wanderPending && (!goalValid || (!agent.pathPending && Vector3.Distance(transform.position, goal) <= agent.stoppingDistance + 0.15f));
             float distance = alive ? Vector3.Distance(transform.position, target.transform.position) : float.PositiveInfinity;
             brain.Tick(Time.timeAsDouble, new InfectedObservation(visible, alive, distance, arrived));
-            bool moving = State == InfectedState.Wander || (State == InfectedState.Investigate && !arrived) || State == InfectedState.Chase;
+            bool moving = (State == InfectedState.Wander && goalValid && !wanderPending) || (State == InfectedState.Investigate && !arrived) || State == InfectedState.Chase;
             agent.isStopped = !moving;
             agent.updateRotation = moving;
             agent.speed = State == InfectedState.Chase ? settings.chaseSpeed : settings.wanderSpeed;
@@ -110,17 +117,26 @@ namespace Outbreak.Infected
             nextDestination = 0;
             if (state == InfectedState.Chase) { goal = lastKnown; goalValid = true; }
             if (state == InfectedState.Idle) brain.WaitUntil(Time.timeAsDouble + UnityEngine.Random.Range(settings.idleMinimum, settings.idleMaximum));
-            if (state == InfectedState.Wander)
+            wanderPending = state == InfectedState.Wander;
+            if (wanderPending)
             {
                 goalValid = false;
-                for (int i = 0; i < 6; i++)
-                {
-                    var disk = UnityEngine.Random.insideUnitCircle * settings.wanderRadius;
-                    if (!NavMesh.SamplePosition(home + new Vector3(disk.x, 0, disk.y), out var hit, 1, agent.areaMask)) continue;
-                    var path = new NavMeshPath();
-                    if (!agent.CalculatePath(hit.position, path) || path.status != NavMeshPathStatus.PathComplete) continue;
-                    goal = hit.position; goalValid = true; break;
-                }
+                wanderSelectAt = Time.time + UnityEngine.Random.Range(settings.wanderDelayMinimum, Mathf.Max(settings.wanderDelayMinimum, settings.wanderDelayMaximum));
+                if (agent.enabled && agent.isOnNavMesh) agent.ResetPath();
+            }
+        }
+        private void SelectWanderDestination()
+        {
+            wanderPending = false;
+            goalValid = false;
+            for (int i = 0; i < 6; i++)
+            {
+                var disk = UnityEngine.Random.insideUnitCircle.normalized * UnityEngine.Random.Range(settings.wanderRadius * 0.4f, settings.wanderRadius);
+                if (!NavMesh.SamplePosition(home + new Vector3(disk.x, 0, disk.y), out var hit, 1, agent.areaMask)) continue;
+                if (Vector3.Distance(hit.position, home) > settings.wanderRadius || Vector3.Distance(hit.position, transform.position) < agent.stoppingDistance + 0.6f) continue;
+                var path = new NavMeshPath();
+                if (!agent.CalculatePath(hit.position, path) || path.status != NavMeshPathStatus.PathComplete) continue;
+                goal = hit.position; goalValid = true; break;
             }
         }
         private void Strike()

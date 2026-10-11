@@ -28,12 +28,24 @@ namespace Outbreak.Player
         public float LeanInput { get; private set; }
         public bool ControlEnabled { get; private set; } = true;
         public bool InteractionFocused { get; private set; }
-        public bool HasControl => ControlEnabled && Application.isFocused && Cursor.lockState == CursorLockMode.Locked;
+        private readonly System.Collections.Generic.HashSet<object> suppressionOwners = new System.Collections.Generic.HashSet<object>();
+        private bool waitForMouseRelease;
+        private int resumeFrame = -1;
+        public bool GameplaySuppressed => suppressionOwners.Count > 0;
+        public bool HasControl => ControlEnabled && !GameplaySuppressed && Application.isFocused && Cursor.lockState == CursorLockMode.Locked;
 
         private void Start() { if (lockCursorOnStart) CaptureCursor(); }
         private void Update()
         {
             ClearInput();
+            if (GameplaySuppressed)
+            {
+                // Walk away from a container without giving the UI mouse back to the FPS.
+                if (ControlEnabled && Application.isFocused)
+                    MoveInput = Vector2.ClampMagnitude(new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")), 1);
+                return;
+            }
+            if (Time.frameCount <= resumeFrame) return;
             if (Input.GetKeyDown(KeyCode.Escape)) { ReleaseCursor(); return; }
             if (!HasControl)
             {
@@ -42,9 +54,10 @@ namespace Outbreak.Player
             }
             MoveInput = Vector2.ClampMagnitude(new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")), 1);
             LookInput = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
-            FireHeld = Input.GetMouseButton(0);
-            FirePressed = Input.GetMouseButtonDown(0);
-            AimHeld = Input.GetMouseButton(1);
+            if (waitForMouseRelease && !Input.GetMouseButton(0) && !Input.GetMouseButton(1)) waitForMouseRelease = false;
+            FireHeld = !waitForMouseRelease && Input.GetMouseButton(0);
+            FirePressed = !waitForMouseRelease && Input.GetMouseButtonDown(0);
+            AimHeld = !waitForMouseRelease && Input.GetMouseButton(1);
             ReloadPressed = Input.GetKeyDown(KeyCode.R);
             PrimaryPressed = Input.GetKeyDown(KeyCode.Alpha1);
             SecondaryPressed = Input.GetKeyDown(KeyCode.Alpha2);
@@ -53,7 +66,17 @@ namespace Outbreak.Player
             SprintHeld = Input.GetKey(sprintKey);
             CrouchHeld = Input.GetKey(crouchKey);
             SlowWalkHeld = Input.GetKey(slowWalkKey);
-            LeanInput = (Input.GetKey(leanRightKey) && !InteractionFocused ? 1 : 0) - (Input.GetKey(leanLeftKey) ? 1 : 0);
+            LeanInput = ResolveLean(Input.GetKey(leanLeftKey), Input.GetKey(leanRightKey), InteractionFocused, GameplaySuppressed);
+        }
+        public static float ResolveLean(bool left, bool right, bool interactionFocused, bool suppressed) =>
+            suppressed ? 0 : (right && !interactionFocused ? 1 : 0) - (left ? 1 : 0);
+        public void SetGameplaySuppressed(object owner, bool value)
+        {
+            if (owner == null) throw new System.ArgumentNullException(nameof(owner));
+            if (value) suppressionOwners.Add(owner); else suppressionOwners.Remove(owner);
+            ClearInput();
+            if (GameplaySuppressed) ReleaseCursor();
+            else { resumeFrame = Time.frameCount + 1; CaptureCursor(); }
         }
         public void SetInteractionFocused(bool value) => InteractionFocused = value;
         public void SetControlEnabled(bool value)
@@ -64,7 +87,9 @@ namespace Outbreak.Player
         }
         public void CaptureCursor()
         {
-            if (!ControlEnabled) return;
+            if (!isActiveAndEnabled || !ControlEnabled || GameplaySuppressed || !Application.isFocused) return;
+            ClearInput();
+            waitForMouseRelease = true;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
