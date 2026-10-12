@@ -1,0 +1,312 @@
+MATERIAL | Assets/Abandoned buildings/Materials/abandoned_buildings/M_grnd_grass.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/Abandoned buildings/Materials/abandoned_buildings/M_house_aband.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/Abandoned buildings/Materials/abandoned_buildings/M_house_burned.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/Abandoned buildings/Materials/abandoned_buildings/M_house_roof.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/Abandoned buildings/Materials/abandoned_buildings/M_house_ruined.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/Abandoned buildings/Materials/abandoned_buildings/M_pole_wood.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/Abandoned buildings/Materials/abandoned_buildings/M_stove.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/Abandoned buildings/Materials/abandoned_buildings/M_stove_burned.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MODEL | Assets/Abandoned buildings/Meshes/abandoned_buildings/birdhouse.FBX | rig=None | scale=1 | avatar=none | skinned=0
+MODEL | Assets/Abandoned buildings/Meshes/abandoned_buildings/house_aband.FBX | rig=None | scale=1 | avatar=none | skinned=0
+MODEL | Assets/Abandoned buildings/Meshes/abandoned_buildings/house_enter.FBX | rig=None | scale=1 | avatar=none | skinned=0
+MODEL | Assets/Abandoned buildings/Meshes/abandoned_buildings/house_roof.FBX | rig=None | scale=1 | avatar=none | skinned=0
+MODEL | Assets/Abandoned buildings/Meshes/abandoned_buildings/house_ruined.FBX | rig=None | scale=1 | avatar=none | skinned=0
+MODEL | Assets/Abandoned buildings/Meshes/abandoned_buildings/house_stairs.FBX | rig=None | scale=1 | avatar=none | skinned=0
+MODEL | Assets/Abandoned buildings/Meshes/abandoned_buildings/junk_bridge.FBX | rig=None | scale=1 | avatar=none | skinned=0
+MODEL | Assets/Abandoned buildings/Meshes/abandoned_buildings/junk_wind_broke.FBX | rig=None | scale=1 | avatar=none | skinned=0
+MODEL | Assets/Abandoned buildings/Meshes/abandoned_buildings/junk_window.FBX | rig=None | scale=1 | avatar=none | skinned=0
+MODEL | Assets/Abandoned buildings/Meshes/abandoned_buildings/pole_wood.FBX | rig=None | scale=1 | avatar=none | skinned=0
+MODEL | Assets/Abandoned buildings/Meshes/abandoned_buildings/stove.FBX | rig=None | scale=1 | avatar=none | skinned=0
+PREFAB | Assets/Abandoned buildings/Prefab/abandoned_buildings/birdhouse.prefab | missingScripts=0 | renderers=1 | colliders=1
+PREFAB | Assets/Abandoned buildings/Prefab/abandoned_buildings/house_aband.prefab | missingScripts=0 | renderers=1 | colliders=1
+PREFAB | Assets/Abandoned buildings/Prefab/abandoned_buildings/house_enter.prefab | missingScripts=0 | renderers=1 | colliders=1
+PREFAB | Assets/Abandoned buildings/Prefab/abandoned_buildings/house_roof.prefab | missingScripts=0 | renderers=1 | colliders=1
+PREFAB | Assets/Abandoned buildings/Prefab/abandoned_buildings/house_ruined.prefab | missingScripts=0 | renderers=1 | colliders=1
+PREFAB | Assets/Abandoned buildings/Prefab/abandoned_buildings/house_stairs.prefab | missingScripts=0 | renderers=1 | colliders=1
+PREFAB | Assets/Abandoned buildings/Prefab/abandoned_buildings/junk_bridge.prefab | missingScripts=0 | renderers=1 | colliders=1
+PREFAB | Assets/Abandoned buildings/Prefab/abandoned_buildings/junk_wind_broke.prefab | missingScripts=0 | renderers=1 | colliders=1
+PREFAB | Assets/Abandoned buildings/Prefab/abandoned_buildings/junk_window.prefab | missingScripts=0 | renderers=1 | colliders=1
+PREFAB | Assets/Abandoned buildings/Prefab/abandoned_buildings/pole_wood.prefab | missingScripts=0 | renderers=1 | colliders=1
+PREFAB | Assets/Abandoned buildings/Prefab/abandoned_buildings/stove.prefab | missingScripts=0 | renderers=1 | colliders=1
+PREFAB | Assets/Abandoned buildings/Prefab/abandoned_buildings/stove_burned.prefab | missingScripts=0 | renderers=1 | colliders=1
+MATERIAL | Assets/Abandoned buildings/Scene/Cube.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+TEXTURE | Assets/Abandoned buildings/Textures/abandoned_buildings/T_detail_crete_D.tga | 256x256 | Default
+TEXTURE | Assets/Abandoned buildings/Textures/abandoned_buildings/T_detail_wood_D.tga | 256x256 | Default
+TEXTURE | Assets/Abandoned buildings/Textures/abandoned_buildings/T_grnd_grass_D.tga | 512x512 | Default
+TEXTURE | Assets/Abandoned buildings/Textures/abandoned_buildings/T_house_aband_D.tga | 2048x2048 | Default
+TEXTURE | Assets/Abandoned buildings/Textures/abandoned_buildings/T_house_aband_N.tga | 2048x2048 | NormalMap
+TEXTURE | Assets/Abandoned buildings/Textures/abandoned_buildings/T_house_roof_D.tga | 1024x1024 | Default
+TEXTURE | Assets/Abandoned buildings/Textures/abandoned_buildings/T_house_roof_N.tga | 1024x1024 | NormalMap
+TEXTURE | Assets/Abandoned buildings/Textures/abandoned_buildings/T_house_ruined_D.tga | 2048x2048 | Default
+TEXTURE | Assets/Abandoned buildings/Textures/abandoned_buildings/T_house_ruined_N.tga | 2048x2048 | NormalMap
+TEXTURE | Assets/Abandoned buildings/Textures/abandoned_buildings/T_pole_wood_D.tga | 256x512 | Default
+TEXTURE | Assets/Abandoned buildings/Textures/abandoned_buildings/T_pole_wood_N.tga | 256x512 | NormalMap
+TEXTURE | Assets/Abandoned buildings/Textures/abandoned_buildings/T_stove_burned_D.tga | 512x512 | Default
+TEXTURE | Assets/Abandoned buildings/Textures/abandoned_buildings/T_stove_D.tga | 512x512 | Default
+MATERIAL | Assets/DelthorGames/AKM/Materials/AKM_Mat.mat | Autodesk Interactive -> Universal Render Pipeline/Autodesk Interactive/AutodeskInteractive
+MODEL | Assets/DelthorGames/AKM/Models/AKM.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+PREFAB | Assets/DelthorGames/AKM/Prefabs/AKM.prefab | missingScripts=0 | renderers=35 | colliders=0
+TEXTURE | Assets/DelthorGames/AKM/Textures/AKMDis_Mat_AlbedoTransparency.png | 2048x2048 | Default
+TEXTURE | Assets/DelthorGames/AKM/Textures/AKMDis_Mat_AO.png | 2048x2048 | Default
+TEXTURE | Assets/DelthorGames/AKM/Textures/AKMDis_Mat_Emission.png | 2048x2048 | Default
+TEXTURE | Assets/DelthorGames/AKM/Textures/AKMDis_Mat_Height.png | 2048x2048 | Default
+TEXTURE | Assets/DelthorGames/AKM/Textures/AKMDis_Mat_MetallicSmoothness.png | 2048x2048 | Default
+TEXTURE | Assets/DelthorGames/AKM/Textures/AKMDis_Mat_Roughness.png | 2048x2048 | Default
+TEXTURE | Assets/DelthorGames/AKM/Textures/AKMDis_Mat4K_NormalOpenGLFix.png | 2048x2048 | NormalMap
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/AC_Adult_Crouch_Walk_Backward.anim | AC_Adult_Crouch_Walk_Backward | duration=1,30 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/AC_Adult_Crouch_Walk_Forward.anim | AC_Adult_Crouch_Walk_Forward | duration=1,30 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/AC_Adult_Crouch_Walk_Left.anim | AC_Adult_Crouch_Walk_Left | duration=1,30 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/AC_Adult_Crouch_Walk_Right.anim | AC_Adult_Crouch_Walk_Right | duration=1,30 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/AC_Adult_Idle_Look_Around.anim | AC_Adult_Idle_Look_Around | duration=7,50 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/AC_Adult_Idle_Relaxed.anim | AC_Adult_Idle_Relaxed | duration=2,80 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/AC_Adult_Jump_Loop.anim | AC_Adult_Jump_Loop | duration=1,60 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/AC_Adult_Run_Backward.anim | AC_Adult_Run_Backward | duration=0,77 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/AC_Adult_Run_Forward.anim | AC_Adult_Run_Forward | duration=0,77 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/AC_Adult_Run_Left.anim | AC_Adult_Run_Left | duration=0,77 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/AC_Adult_Run_Right.anim | AC_Adult_Run_Right | duration=0,77 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/AC_Adult_Strafe_Left.anim | AC_Adult_Strafe_Left | duration=1,03 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/AC_Adult_Strafe_Right.anim | AC_Adult_Strafe_Right | duration=1,03 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/AC_Adult_Walk_Backward.anim | AC_Adult_Walk_Backward | duration=1,03 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/AC_Adult_Walk_Forward.anim | AC_Adult_Walk_Forward | duration=1,03 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/Adult_Block_With_Hands.anim | Adult_Block_With_Hands | duration=2,80 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/Adult_Death_Backward.anim | Adult_Death_Backward | duration=3,00 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/Adult_Hit_Reaction_Light.anim | Adult_Hit_Reaction_Light | duration=1,53 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/Adult_IdleLookAround.anim | Adult_IdleLookAround | duration=9,20 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/Adult_IdleTalkPhone.anim | Adult_IdleTalkPhone | duration=13,10 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/Adult_Jump_Start.anim | Adult_Jump_Start | duration=0,77 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/Adult_Run.anim | Adult_Run | duration=0,67 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/Adult_TalkGestureActive.anim | Adult_TalkGestureActive | duration=16,00 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/Adult_TalkGestureListen.anim | Adult_TalkGestureListen | duration=8,57 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/Adult_Walk.anim | Adult_Walk | duration=1,33 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/Adult_WalkCarryItem.anim | Adult_WalkCarryItem | duration=1,33 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/Adult_WalkTalkPhone.anim | Adult_WalkTalkPhone | duration=1,33 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/Pumped_Attack_Punch.anim | Pumped_Attack_Punch | duration=0,97 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/Pumped_Idle_Breathing.anim | Pumped_Idle_Breathing | duration=9,47 | human=True | loop=True
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Adult_Animations/Pumped_Jump_End.anim | Pumped_Jump_End | duration=1,07 | human=True | loop=True
+CONTROLLER | Assets/ithappy/Apocalypse_Free/Animations/Character_Movement.controller | clips=11
+STATE | Movement | motion=Blend Tree
+STATE | Jump | motion=Blend Tree
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Doberman_Animations/Doberman_AskToPlay.anim | Doberman_AskToPlay | duration=5,43 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Doberman_Animations/Doberman_Bark.anim | Doberman_Bark | duration=4,67 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Doberman_Animations/Doberman_Flip.anim | Doberman_Flip | duration=2,67 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Doberman_Animations/Doberman_GivePaw.anim | Doberman_GivePaw | duration=4,67 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Doberman_Animations/Doberman_Idle.anim | Doberman_Idle | duration=11,67 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Doberman_Animations/Doberman_Lie.anim | Doberman_Lie | duration=10,00 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Doberman_Animations/Doberman_LieHappy.anim | Doberman_LieHappy | duration=9,40 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Doberman_Animations/Doberman_Run.anim | Doberman_Run | duration=0,53 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Doberman_Animations/Doberman_Sleep.anim | Doberman_Sleep | duration=2,33 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Doberman_Animations/Doberman_Turn.anim | Doberman_Turn | duration=2,33 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Animations/Doberman_Animations/Doberman_Walk.anim | Doberman_Walk | duration=1,00 | human=False | loop=False
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/Car_Color_Blood.mat | Ithappy/Blood Overlay/URP -> Ithappy/Blood Overlay/URP
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/Car_Headlights.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/Car_Taillights.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/Color.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/Color_Blood.mat | Ithappy/Blood Overlay/URP -> Ithappy/Blood Overlay/URP
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/Color_Body_Blood.mat | Ithappy/Blood Overlay/URP -> Ithappy/Blood Overlay/URP
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/Color_Dirt.mat | Ithappy/Blood Overlay/URP -> Ithappy/Blood Overlay/URP
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/Color_Dust.mat | Ithappy/Blood Overlay/URP -> Ithappy/Blood Overlay/URP
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/Dashboard.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/Emissive.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/Fabric_14_Blood.mat | Ithappy/Blood Overlay/URP -> Ithappy/Blood Overlay/URP
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/Glass.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/LicensePlates.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/Map.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/Metal.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/Net.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MATERIAL | Assets/ithappy/Apocalypse_Free/Materials/RoadSigns.mat | Ithappy/Blood Overlay/URP -> Ithappy/Blood Overlay/URP
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Adult_Base.fbx | rig=Human | scale=1 | avatar=valid=True,human=True | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Survivor/Adult_Female_Body.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Survivor/Adult_Female_Face_Usual.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Survivor/Adult_Survivor.fbx | rig=Human | scale=1 | avatar=none | skinned=9
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Survivor/Backpack.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Survivor/Gloves.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Survivor/Hairstyle_Female.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Survivor/Hat.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Survivor/Outwear_Adult_Female.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Survivor/Pants_Adult_Female.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Survivor/Shoes.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Woodcutter/Adult_Male_Body.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Woodcutter/Adult_Male_Face_Usual.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Woodcutter/Adult_Woodcutter.fbx | rig=Human | scale=1 | avatar=none | skinned=9
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Woodcutter/Back_Guitar.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Woodcutter/Beard_Male.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Woodcutter/Glasses.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Woodcutter/Hairstyle_Single_Male.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Woodcutter/Outwear_Adult_Male.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Woodcutter/Pants_Adult_Male.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Adult_Woodcutter/Shoes_02.fbx | rig=Human | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman.fbx | rig=Generic | scale=1 | avatar=none | skinned=8
+CLIP | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman.fbx | Doberman_AskToPlay | duration=5,43 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman.fbx | Doberman_Bark | duration=4,67 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman.fbx | Doberman_Flip | duration=2,67 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman.fbx | Doberman_GivePaw | duration=4,67 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman.fbx | Doberman_Idle | duration=11,67 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman.fbx | Doberman_Lie | duration=10,00 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman.fbx | Doberman_LieHappy | duration=9,40 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman.fbx | Doberman_Run | duration=0,53 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman.fbx | Doberman_Sleep | duration=2,33 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman.fbx | Doberman_Turn | duration=2,33 | human=False | loop=False
+CLIP | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman.fbx | Doberman_Walk | duration=1,00 | human=False | loop=False
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman_Bag_L.fbx | rig=Generic | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman_Bag_R.fbx | rig=Generic | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman_Bandage.fbx | rig=Generic | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman_Bandana.fbx | rig=Generic | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman_Barrel.fbx | rig=Generic | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman_Body.fbx | rig=Generic | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman_Cloth.fbx | rig=Generic | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Characters/Doberman/Doberman_Glasses.fbx | rig=Generic | scale=1 | avatar=none | skinned=1
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Environment/Pine_01.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Environment/Road_01.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Environment/Road_Barrier_01.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_Armor_01.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_Armor_02.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_Armor_03.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_Armor_04.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_Armor_05.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_Door_L.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_Door_R.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_Needle_Fuel.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_Needle_Oil.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_Needle_Speedometer.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_Needle_Tachometer.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_SteeringWheel.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_Supplies_01.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_Wheel_BL.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_Wheel_BR.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_Wheel_FL.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Apocalypse_Car_01_Wheel_FR.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Barbecue_Grill.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Concrete_Fence.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/First_Aid.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Flashlight.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Frame.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Fuel_Canister.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Fuel_Canister_Lit_01.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Gas_Burner.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Katana.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Map.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Pistol1_Base.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Pistol1_Bolt.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Pistol1_Magazine.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Pistol1_Trigger.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Signs_Shield.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+MODEL | Assets/ithappy/Apocalypse_Free/Meshes/Props/Walkie_talkie.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Adult_Base.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Survivor/Adult_Female_Body.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Survivor/Adult_Female_Face_Usual.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Survivor/Adult_Survivor.prefab | missingScripts=0 | renderers=9 | colliders=1
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Survivor/Backpack.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Survivor/Gloves.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Survivor/Hairstyle_Famale.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Survivor/Hat.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Survivor/Outwear_Adult_Female.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Survivor/Pants_Adult_Female.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Survivor/Shoes.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Woodcutter/Adult_Male_Body.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Woodcutter/Adult_Male_Face_Usual.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Woodcutter/Adult_Woodcutter.prefab | missingScripts=0 | renderers=9 | colliders=1
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Woodcutter/Back_Guitar.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Woodcutter/Beard_Male.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Woodcutter/Glasses.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Woodcutter/Hairstyle_Single_Male.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Woodcutter/Outwear_Adult_Male.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Woodcutter/Pants_Adult_Male.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Adult_Woodcutter/Shoes.001.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Doberman/Doberman.prefab | missingScripts=0 | renderers=8 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Doberman/Doberman_Bag_L.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Doberman/Doberman_Bag_R.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Doberman/Doberman_Bandage.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Doberman/Doberman_Bandana.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Doberman/Doberman_Barrel.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Doberman/Doberman_Body.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Doberman/Doberman_Cloth.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Characters/Doberman/Doberman_Glasses.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Environment/Pine_01.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Environment/Road_01.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Environment/Road_Barrier_01.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01.prefab | missingScripts=0 | renderers=18 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Armor_01.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Armor_02.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Armor_03.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Armor_04.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Armor_05.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Body.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Door_L.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Door_R.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Needle_Fuel.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Needle_Oil.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Needle_Speedometer.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Needle_Tachometer.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_SteeringWheel.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Supplies_01.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Wheel_BL.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Wheel_BR.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Wheel_FL.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Apocalypse_Car_01_Wheel_FR.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Barbecue_Grill.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Concrete_Fence.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/First_Aid.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Flashlight.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Frame.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Fuel_Canister.prefab | missingScripts=0 | renderers=2 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Fuel_Canister_Lit_01.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Gas_Burner.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Katana.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Map.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Pistol1.prefab | missingScripts=0 | renderers=4 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Pistol1_Base.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Pistol1_Bolt.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Pistol1_Magazine.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Pistol1_Trigger.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Signs_Shield.prefab | missingScripts=0 | renderers=1 | colliders=0
+PREFAB | Assets/ithappy/Apocalypse_Free/Prefabs/Props/Walkie_talkie.prefab | missingScripts=0 | renderers=1 | colliders=0
+MATERIAL | Assets/ithappy/Apocalypse_Free/Skyboxes/Skybox_3.mat | Skybox/Cubemap -> Skybox/Cubemap
+TEXTURE | Assets/ithappy/Apocalypse_Free/Skyboxes/Skybox_Textures/Skybox_3.png | 2048x2048 | Default
+TEXTURE | Assets/ithappy/Apocalypse_Free/Textures/blood_mask.png | 2048x2048 | Default
+TEXTURE | Assets/ithappy/Apocalypse_Free/Textures/Car_Numbers.png | 512x512 | Default
+TEXTURE | Assets/ithappy/Apocalypse_Free/Textures/Color2.png | 1024x1024 | Default
+TEXTURE | Assets/ithappy/Apocalypse_Free/Textures/Dashboard.png | 1024x1024 | Default
+TEXTURE | Assets/ithappy/Apocalypse_Free/Textures/Fabric_14.png | 2048x2048 | Default
+TEXTURE | Assets/ithappy/Apocalypse_Free/Textures/Map.png | 1024x1024 | Default
+TEXTURE | Assets/ithappy/Apocalypse_Free/Textures/Net.png | 1024x1024 | Default
+TEXTURE | Assets/ithappy/Apocalypse_Free/Textures/RoadSigns.png | 2048x2048 | Default
+TEXTURE | Assets/ithappy/Apocalypse_Free/Textures/Textures_4.png | 1024x1024 | Default
+MODEL | Assets/Kevin Iglesias/Zombie Animations/Animations/Zombie@Attack01.fbx | rig=Human | scale=1 | avatar=none | skinned=0
+CLIP | Assets/Kevin Iglesias/Zombie Animations/Animations/Zombie@Attack01.fbx | Zombie@Attack01 | duration=1,33 | human=True | loop=False
+MODEL | Assets/Kevin Iglesias/Zombie Animations/Animations/Zombie@Damage01.fbx | rig=Human | scale=1 | avatar=none | skinned=0
+CLIP | Assets/Kevin Iglesias/Zombie Animations/Animations/Zombie@Damage01.fbx | Zombie@Damage01 | duration=0,50 | human=True | loop=False
+MODEL | Assets/Kevin Iglesias/Zombie Animations/Animations/Zombie@Death01_A.fbx | rig=Human | scale=1 | avatar=none | skinned=0
+CLIP | Assets/Kevin Iglesias/Zombie Animations/Animations/Zombie@Death01_A.fbx | Zombie@Death01_A | duration=1,33 | human=True | loop=False
+CLIP | Assets/Kevin Iglesias/Zombie Animations/Animations/Zombie@Death01_A.fbx | Zombie@Death01_B | duration=1,33 | human=True | loop=False
+MODEL | Assets/Kevin Iglesias/Zombie Animations/Animations/Zombie@Idle01.fbx | rig=Human | scale=1 | avatar=none | skinned=0
+CLIP | Assets/Kevin Iglesias/Zombie Animations/Animations/Zombie@Idle01.fbx | Zombie@Idle01 | duration=2,53 | human=True | loop=True
+MODEL | Assets/Kevin Iglesias/Zombie Animations/Animations/Zombie@Idle01_Action01.fbx | rig=Human | scale=1 | avatar=none | skinned=0
+CLIP | Assets/Kevin Iglesias/Zombie Animations/Animations/Zombie@Idle01_Action01.fbx | Zombie@Idle01_Action01 | duration=2,83 | human=True | loop=False
+MODEL | Assets/Kevin Iglesias/Zombie Animations/Animations/Zombie@Walk01.fbx | rig=Human | scale=1 | avatar=none | skinned=0
+CLIP | Assets/Kevin Iglesias/Zombie Animations/Animations/Zombie@Walk01.fbx | Zombie@Walk01 | duration=1,47 | human=True | loop=True
+CLIP | Assets/Kevin Iglesias/Zombie Animations/Animations/Zombie@Walk01.fbx | Zombie@Walk01 [RM] | duration=1,47 | human=True | loop=True
+CONTROLLER | Assets/Kevin Iglesias/Zombie Animations/AnimatorControllers/Zombie@Attacks.controller | clips=1
+STATE | Attack01 | motion=Zombie@Attack01
+CONTROLLER | Assets/Kevin Iglesias/Zombie Animations/AnimatorControllers/Zombie@Damages.controller | clips=1
+STATE | Damage01 | motion=Zombie@Damage01
+CONTROLLER | Assets/Kevin Iglesias/Zombie Animations/AnimatorControllers/Zombie@Death.controller | clips=1
+STATE | Zombie@Death01_A | motion=Zombie@Death01_A
+CONTROLLER | Assets/Kevin Iglesias/Zombie Animations/AnimatorControllers/Zombie@Idles.controller | clips=2
+STATE | Idle01 | motion=Zombie@Idle01
+STATE | Idle01 Action | motion=Zombie@Idle01_Action01
+CONTROLLER | Assets/Kevin Iglesias/Zombie Animations/AnimatorControllers/Zombie@Walk.controller | clips=1
+STATE | Zombie@Walk01 | motion=Zombie@Walk01
+MATERIAL | Assets/Kevin Iglesias/Zombie Animations/Materials/ZombieFloor.mat | Universal Render Pipeline/Unlit -> Universal Render Pipeline/Unlit
+TEXTURE | Assets/Kevin Iglesias/Zombie Animations/Materials/ZombieFloorTexture.tga | 1024x1024 | Default
+MATERIAL | Assets/Kevin Iglesias/Zombie Animations/Materials/ZombieMaterial.mat | Universal Render Pipeline/Unlit -> Universal Render Pipeline/Unlit
+TEXTURE | Assets/Kevin Iglesias/Zombie Animations/Materials/ZombieTexture.tga | 512x512 | Default
+MODEL | Assets/Kevin Iglesias/Zombie Animations/Model/ZombieModel.fbx | rig=Human | scale=1 | avatar=valid=True,human=True | skinned=1
+PREFAB | Assets/Kevin Iglesias/Zombie Animations/Prefabs/Zombie.prefab | missingScripts=0 | renderers=1 | colliders=0
+MATERIAL | Assets/tec9/materials/tec_9_mat.mat | Universal Render Pipeline/Lit -> Universal Render Pipeline/Lit
+MODEL | Assets/tec9/model/Tec9.fbx | rig=Generic | scale=1 | avatar=none | skinned=0
+PREFAB | Assets/tec9/prefab/Tec9.prefab | missingScripts=0 | renderers=1 | colliders=0
+TEXTURE | Assets/tec9/textures/Tec9_Albedo.png | 2048x2048 | Default
+TEXTURE | Assets/tec9/textures/Tec9_MetallicRoughness.png | 2048x2048 | Default
+TEXTURE | Assets/tec9/textures/Tec9_Normal.png | 2048x2048 | NormalMap
+SUMMARY | files=319 | converted=1 | failures=0
