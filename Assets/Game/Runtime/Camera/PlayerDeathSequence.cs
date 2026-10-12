@@ -86,6 +86,8 @@ namespace Outbreak.Cameras
         { raidCompletion?.Complete(); OnAudioCue?.Invoke(PlayerLifeAudioCue.DeathComplete); OnDeathCompleted?.Invoke(); }
         private void OnGUI()
         {
+            // The terminal Canvas owns its black background; an IMGUI overlay would obscure its buttons.
+            if (lifecycle.Completed && GetComponent<Outbreak.Raids.RaidLoopDebugUI>()?.ResultVisible == true) return;
             float alpha = lifecycle.Started ? Mathf.SmoothStep(0, 1, Mathf.InverseLerp(0.5f, 1, lifecycle.Progress)) :
                 Mathf.Clamp01((damageFlashUntil - Time.unscaledTime) / 0.12f) * 0.06f;
             if (alpha <= 0) return;

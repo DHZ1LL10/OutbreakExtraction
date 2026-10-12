@@ -23,6 +23,18 @@ namespace Outbreak.Tests
     // Non-rendering scene lifecycle regression with a unique save; never touches profile.json.
     public sealed class HubSceneFlowTests
     {
+        [UnityTest] public IEnumerator MainMenuSettingsAndConfirmationBuildWithoutChangingProfile()
+        {
+            yield return SceneManager.LoadSceneAsync("MainMenu",LoadSceneMode.Single);
+            yield return null;
+            var menu=UnityEngine.Object.FindFirstObjectByType<Outbreak.Menu.MainMenuController>(); Assert.IsNotNull(menu);
+            var canvas=UnityEngine.Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None).Single(c=>c.name=="Main menu UI");
+            Assert.AreEqual(new Vector2(1920,1080),canvas.GetComponent<UnityEngine.UI.CanvasScaler>().referenceResolution);
+            Set(menu,"settings",true); menu.GetType().GetMethod("Build",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(menu,null); yield return null;
+            Assert.AreEqual(2,canvas.GetComponentsInChildren<UnityEngine.UI.Slider>().Length);
+            Set(menu,"settings",false); Set(menu,"confirmNewGame",true); menu.GetType().GetMethod("Build",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(menu,null); yield return null;
+            Assert.IsTrue(canvas.GetComponentsInChildren<UnityEngine.UI.Text>().Any(t=>t.text=="START NEW GAME?"));
+        }
         private GameObject managerObject;
         private string savePath;
         private static void Set(object target, string name, object value) => target.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(target, value);
@@ -64,6 +76,19 @@ namespace Outbreak.Tests
             Assert.IsFalse(hubInput.GameplaySuppressed);
             Assert.IsTrue(driver.AcceptMission());
             Assert.IsTrue(driver.Equip(LoadoutSlot.Primary, rifle.item));
+            // All station screens must build through the same modal ownership without leaving suppression behind.
+            var interactor=hubUI.GetComponent<Outbreak.Interaction.PlayerInteractor>();
+            var spawn=hubUI.transform.position;
+            foreach(var station in UnityEngine.Object.FindObjectsByType<HubStation>(FindObjectsSortMode.None))
+            {
+                hubUI.transform.position=station.transform.position+Vector3.back;
+                interactor.OpenPanel(station); yield return null;
+                Assert.AreSame(station,interactor.ActivePanel); Assert.IsTrue(hubInput.GameplaySuppressed);
+                Assert.Greater(UnityEngine.Object.FindObjectsByType<UnityEngine.UI.Button>(FindObjectsSortMode.None).Length,0,station.PanelTitle);
+                interactor.ClosePanel(); yield return null;
+                Assert.IsFalse(hubInput.GameplaySuppressed,station.PanelTitle);
+            }
+            hubUI.transform.position=spawn;
             var optic = attachments.First(a => a.slot == AttachmentSlot.Optic);
             Assert.IsTrue(driver.Configure(LoadoutSlot.Primary, optic.slot, optic));
             Assert.IsTrue(driver.Deploy());
@@ -73,6 +98,13 @@ namespace Outbreak.Tests
             Assert.IsTrue(PresentationMode.Active); Assert.IsFalse(PresentationMode.DebugVisible);
             Assert.That(Camera.main.fieldOfView, Is.InRange(78f, 80f));
             var firearm = UnityEngine.Object.FindFirstObjectByType<FirearmController>();
+            var raidUI=UnityEngine.Object.FindFirstObjectByType<Outbreak.Raids.RaidLoopDebugUI>();
+            var raidInput=raidUI.GetComponent<Outbreak.Player.PlayerInput>();
+            typeof(Outbreak.Raids.RaidLoopDebugUI).GetMethod("SetInventory",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(raidUI,new object[]{true});
+            yield return null; Assert.IsTrue(raidInput.GameplaySuppressed);
+            Assert.Greater(UnityEngine.Object.FindObjectsByType<UnityEngine.UI.Button>(FindObjectsSortMode.None).Length,0);
+            typeof(Outbreak.Raids.RaidLoopDebugUI).GetMethod("SetInventory",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(raidUI,new object[]{false});
+            Assert.IsFalse(raidInput.GameplaySuppressed);
             Assert.AreEqual(rifle.WeaponId, firearm.PrimaryState.Definition.WeaponId); Assert.IsNull(firearm.SecondaryState);
             Assert.AreSame(optic, firearm.PrimaryState.Attachments[AttachmentSlot.Optic]); Assert.AreSame(manager.Flow, UnityEngine.Object.FindFirstObjectByType<Outbreak.Raids.RaidRuntimeContext>().Flow);
             // Presentation references must not replace gameplay receivers or NavMesh movement.
