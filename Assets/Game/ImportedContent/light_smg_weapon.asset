@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5274421ca204d97a1b1c6936fd42111, type: 3}
+  m_Name: light_smg_weapon
+  m_EditorClassIdentifier:
+  item: {fileID: 11400000, guid: 8db0d81f87bcb8547b8c6385e275b200, type: 2}
+  ammoType: {fileID: 11400000, guid: d3fcd04b4d160cc459fb9f3f7945babc, type: 2}
+  weaponClass: 1
+  supportedAttachmentSlots: 15
+  noiseMultiplier: 0.9
+  muzzleFlashMultiplier: 1
+  fireSound: {fileID: 0}
+  suppressedFireSound: {fileID: 0}
+  dryFireSound: {fileID: 0}
+  reloadSound: {fileID: 0}
+  equipSound: {fileID: 0}
+  damage: 18
+  headshotMultiplier: 2
+  fireRate: 840
+  fireMode: 1
+  allowModeSwitch: 1
+  magazineCapacity: 30
+  initialReserveAmmo: 150
+  reloadDuration: 2
+  range: 75
+  hipSpread: 1.9
+  adsSpread: 0.2
+  recoilVertical: 0.65
+  recoilHorizontal: 0.28
+  recoilRecovery: 5
+  adsFov: 58
+  adsSpeed: 12
+  movementSpreadMultiplier: 1.5
+  crouchSpreadMultiplier: 0.7
+  airSpreadMultiplier: 2
+  sprintRestriction: 1
+  visualKick: 0.025
+  visualRotation: 1.3
+  cameraKick: 0.15

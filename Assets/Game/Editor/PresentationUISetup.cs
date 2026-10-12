@@ -56,7 +56,7 @@ namespace Outbreak.Editor
                 var attachment=AssetDatabase.LoadAssetAtPath<AttachmentDefinition>(AssetDatabase.GUIDToAssetPath(guid));
                 if(attachment.item!=null && attachment.visualPrefab!=null) entries.Add(new ItemPreviewLibrary.Entry {item=attachment.item,model=attachment.visualPrefab});
             }
-            library.entries=entries.ToArray(); EditorUtility.SetDirty(library);
+            library.entries=library.entries.Where(e=>!entries.Any(entry=>entry.item==e.item)).Concat(entries).ToArray(); EditorUtility.SetDirty(library);
         }
         private static void Add(List<ItemPreviewLibrary.Entry> entries,ItemDefinition item,string path)
         { var model=AssetDatabase.LoadAssetAtPath<GameObject>(path); if(model==null) throw new System.InvalidOperationException("Missing preview model: "+path); entries.Add(new ItemPreviewLibrary.Entry {item=item,model=model}); }

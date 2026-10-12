@@ -41,6 +41,13 @@ namespace Outbreak.Hub
         private void Start()
         {
             if (Instance != this || Flow == null) return;
+            var imported = Resources.Load<ImportedContentRegistry>("ImportedContent");
+            if (imported != null)
+            {
+                weapons = ImportedContentRegistry.Merge(weapons, imported.weapons);
+                attachments = ImportedContentRegistry.Merge(attachments, imported.attachments);
+                traderStock = ImportedContentRegistry.Merge(traderStock, imported.traderItems);
+            }
             Ready = false;
             if (File.Exists(manager.SavePath) && !manager.LoadSucceeded)
             { Message = "Profile could not be loaded. Original save preserved: " + Flow.LastMessage; return; }

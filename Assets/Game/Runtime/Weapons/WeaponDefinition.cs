@@ -25,6 +25,8 @@ namespace Outbreak.Weapons
         public FireMode fireMode = FireMode.SemiAutomatic;
         public bool allowModeSwitch;
         [Min(1)] public int magazineCapacity = 15;
+        [Tooltip("-1 retains the scene/raid adapter reserve; imported definitions can specify their own initial reserve."), Min(-1)]
+        public int initialReserveAmmo = -1;
         [Min(0.01f)] public float reloadDuration = 1.65f;
         [Min(1)] public float range = 100;
         [Tooltip("Cone half-angle in degrees"), Min(0)] public float hipSpread = 1;
@@ -50,7 +52,7 @@ namespace Outbreak.Weapons
             item.Validate();
             if (ammoType == null || ammoType.Type != ItemType.Ammo) throw new ArgumentException("Firearm needs an Ammo item.");
             ammoType.Validate();
-            if (magazineCapacity < 1 || fireRate <= 0 || reloadDuration <= 0 || range <= 0 || damage <= 0 ||
+            if (magazineCapacity < 1 || initialReserveAmmo < -1 || fireRate <= 0 || reloadDuration <= 0 || range <= 0 || damage <= 0 ||
                 !Enum.IsDefined(typeof(FireMode), fireMode)) throw new ArgumentException("Invalid firearm settings.");
         }
     }

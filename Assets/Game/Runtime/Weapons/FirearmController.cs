@@ -80,7 +80,9 @@ namespace Outbreak.Weapons
                     if (definition != null && definition.WeaponId == item.Id) return definition;
                 throw new ArgumentException("Missing firearm definition for " + item.Id);
             }
-            EquipDefinitions(Resolve(LoadoutSlot.Primary), Resolve(LoadoutSlot.Secondary), primaryAmmo, secondaryAmmo);
+            var p = Resolve(LoadoutSlot.Primary); var s = Resolve(LoadoutSlot.Secondary);
+            EquipDefinitions(p, s, p != null && p.initialReserveAmmo >= 0 ? p.initialReserveAmmo : primaryAmmo,
+                s != null && s.initialReserveAmmo >= 0 ? s.initialReserveAmmo : secondaryAmmo);
             if (Current != null) OnWeaponEquipped?.Invoke(Current);
         }
         private void EquipDefinitions(WeaponDefinition p, WeaponDefinition s, int pAmmo, int sAmmo)

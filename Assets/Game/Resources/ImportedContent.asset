@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b005baf1e9dbf41bb323304a0dd86b, type: 3}
+  m_Name: ImportedContent
+  m_EditorClassIdentifier:
+  weapons:
+  - {fileID: 11400000, guid: fa685018834d7744f8cd8743caa21bf4, type: 2}
+  - {fileID: 11400000, guid: f5e73564422ec4c459afca93b4785354, type: 2}
+  - {fileID: 11400000, guid: 3b4a7ab6efcc2fd428cec1b92e1bf92d, type: 2}
+  - {fileID: 11400000, guid: 97be62a835fbcaf4da987fd4b7c15ee9, type: 2}
+  - {fileID: 11400000, guid: 57019ddeb2415ad4aa0885beedad95f6, type: 2}
+  attachments:
+  - {fileID: 11400000, guid: 668c76328c255e543840a87e769b3613, type: 2}
+  - {fileID: 11400000, guid: 1703764b83b3b994cb378788be8be84d, type: 2}
+  - {fileID: 11400000, guid: 20d32bce97cdef844a7b3a28bca946dd, type: 2}
+  - {fileID: 11400000, guid: d78489836c7996b4d8f200286e39ecdd, type: 2}
+  - {fileID: 11400000, guid: 251d07e3c8603714c8134f670cd4de63, type: 2}
+  traderItems:
+  - {fileID: 11400000, guid: 8287ac33f149066478c01418b9a37659, type: 2}
+  - {fileID: 11400000, guid: 4696ad5f251e805459ac61a226c5a772, type: 2}
+  - {fileID: 11400000, guid: 8db0d81f87bcb8547b8c6385e275b200, type: 2}
+  - {fileID: 11400000, guid: b6999fdee6ebec747b21d0fcaf30e4ed, type: 2}
+  - {fileID: 11400000, guid: 03a503a73dc604047be2ebab3dcfb493, type: 2}
+  - {fileID: 11400000, guid: 261b020de7149d04c9d7069822c13469, type: 2}
+  - {fileID: 11400000, guid: 6e42f59e7bac9df42bb8c8fac1104205, type: 2}
+  - {fileID: 11400000, guid: ff5b04f3f055eb14388dbb312015ade1, type: 2}
+  - {fileID: 11400000, guid: 53f56b158d4aa694f95c18dd162dc3af, type: 2}
+  - {fileID: 11400000, guid: b351b02d324c05c48b74672c186b944a, type: 2}
+  - {fileID: 11400000, guid: 32739a101115f274984d96160f1d1c00, type: 2}
+  infectedVisuals:
+  - id: kevin_zombie
+    model: {fileID: 1776966266084158026, guid: f99bbd0754201f448b27f0c455b92b76, type: 3}
+    avatar: {fileID: 9000000, guid: 0112b3ddf6b69f148b600356eb9c21a3, type: 3}
+    controller: {fileID: 9100000, guid: f884b9aab4ab0e34f90fd335f08a05a0, type: 2}
+    allowNormal: 1
+    allowRunner: 1
+  - id: hospital_patient_04
+    model: {fileID: 5921367157248738129, guid: f94c577fdd00e594abc50fdff8f3ff17, type: 3}
+    avatar: {fileID: 9000000, guid: 4dd08149a73761d46945acc455781ac0, type: 3}
+    controller: {fileID: 9100000, guid: f884b9aab4ab0e34f90fd335f08a05a0, type: 2}
+    allowNormal: 1
+    allowRunner: 1
+  infectedAudio:
+    idle:
+    - {fileID: 8300000, guid: f462d308fc6a648b288adb78161502a5, type: 3}
+    - {fileID: 8300000, guid: 824a492d546744169b7e4460926ebb2a, type: 3}
+    - {fileID: 8300000, guid: 05f860bb66f844d89908829a80c6fe13, type: 3}
+    - {fileID: 8300000, guid: 69812e02fdf6c421a938309cc2d45922, type: 3}
+    - {fileID: 8300000, guid: 8b8be6e6b3dd044d782ae23b59519a28, type: 3}
+    - {fileID: 8300000, guid: 50be8f631d6a14da58b3ef230ec1c022, type: 3}
+    attack:
+    - {fileID: 8300000, guid: 2c536cff31c3a402898ac356ebd96aba, type: 3}
+    - {fileID: 8300000, guid: be16685415a4349d1b6616e9308ea495, type: 3}
+    - {fileID: 8300000, guid: c25bd31188a0c44148a188f5c09772e7, type: 3}
+    - {fileID: 8300000, guid: b7284155518ed4dbe918cab5ae88013a, type: 3}
+    - {fileID: 8300000, guid: 503cac27b8c114382ba06293cf68902c, type: 3}
+    - {fileID: 8300000, guid: 7d76f8d46388e4a88a47beac2f2f0bc6, type: 3}
+    damage:
+    - {fileID: 8300000, guid: 5b29b0de6b62747e68ebf332c8811f35, type: 3}
+    - {fileID: 8300000, guid: 4ab62cbf20de44a4582c40ed442be13a, type: 3}
+    - {fileID: 8300000, guid: ecff13b727eaf4888a9f6a3221bdb662, type: 3}
+    - {fileID: 8300000, guid: fb7fbee5d5ed64bd1a8ca1ad242ba7eb, type: 3}
+    - {fileID: 8300000, guid: 381951b7e211640659f2659520c3145b, type: 3}
+    - {fileID: 8300000, guid: 967208deb0e2849fdaf89dcc7413d1a9, type: 3}
+    death:
+    - {fileID: 8300000, guid: 326203e6dcd57467c92e2bcbf9c25e85, type: 3}
+    - {fileID: 8300000, guid: 763a323b04dbb4cbf99082a82ef3cb54, type: 3}
+    - {fileID: 8300000, guid: d8285c976a26141b7b956c30552425bb, type: 3}
+    alert: {fileID: 0}
+    chase: {fileID: 0}
+  futureImpacts:
+  - category: generic
+    prefab: {fileID: 3042519775331041172, guid: 841004c4c6a39e244abe2257394de913,
+      type: 3}
+  - category: blood-compatible; URP conversion required
+    prefab: {fileID: 8782009059513614302, guid: 171dda363e9efd94ca9bc63e38ca9658,
+      type: 3}
+  - category: stylized hit/sparks; not a verified metal surface effect
+    prefab: {fileID: 500345726442012828, guid: 50a810bfd70577b41a2d43ae0241ea2d, type: 3}
+  futureAttachmentModels:
+  - attachment: {fileID: 11400000, guid: 668c76328c255e543840a87e769b3613, type: 2}
+    model: {fileID: 5480886499858025401, guid: 752571ce81c7bde49ba3a5f38c4d4fb4, type: 3}
+  - attachment: {fileID: 11400000, guid: 1703764b83b3b994cb378788be8be84d, type: 2}
+    model: {fileID: 388282499530796826, guid: 11e4e2ebe8a3c304d9a15fdfe19f16aa, type: 3}
+  - attachment: {fileID: 11400000, guid: 20d32bce97cdef844a7b3a28bca946dd, type: 2}
+    model: {fileID: 6298887692370461864, guid: ed19279c44e022b43920b1a48ef377ac, type: 3}
+  - attachment: {fileID: 11400000, guid: d78489836c7996b4d8f200286e39ecdd, type: 2}
+    model: {fileID: 747662025916181717, guid: ca3e09ee77aa6eb40a25d8fd812e880e, type: 3}
+  - attachment: {fileID: 11400000, guid: 251d07e3c8603714c8134f670cd4de63, type: 2}
+    model: {fileID: 8808141033411770564, guid: 65a7dc8008ef1de40a649e651b7a2b1e, type: 3}
