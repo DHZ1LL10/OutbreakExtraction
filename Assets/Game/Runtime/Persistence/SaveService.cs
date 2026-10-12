@@ -35,6 +35,19 @@ namespace Outbreak.Persistence
             catch (Exception ex) when (IsExpected(ex)) { error = ex.Message; return false; }
         }
 
+        public bool TryDelete(out string error)
+        {
+            error = null;
+            try
+            {
+                if (File.Exists(FilePath)) File.Delete(FilePath);
+                string temporary = FilePath + ".tmp";
+                if (File.Exists(temporary)) File.Delete(temporary);
+                return true;
+            }
+            catch (Exception ex) when (IsExpected(ex)) { error = ex.Message; return false; }
+        }
+
         public LoadResult Load(ItemCatalog catalog, out PlayerProfile profile, out string message)
         {
             profile = null;

@@ -44,7 +44,8 @@ namespace Outbreak.Player
             LookDelta = Vector2.zero;
             if (!input.HasControl) return;
             // Mouse axes already represent frame displacement; do not multiply by deltaTime.
-            Vector2 mouse = input.LookInput * sensitivity;
+            float settingsMultiplier = PlayerPrefs.GetFloat("outbreak.mouseSensitivity", 1f);
+            Vector2 mouse = input.LookInput * sensitivity * Mathf.Clamp(settingsMultiplier, .25f, 2.5f);
             float previousPitch = pitch;
             transform.Rotate(0, mouse.x, 0, Space.Self);
             pitch = Mathf.Clamp(pitch + mouse.y * (invertY ? 1 : -1), minimumPitch, maximumPitch);
