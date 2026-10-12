@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2106ae0f455fab9479034117f343fbc4, type: 3}
+  m_Name: 05_critical
+  m_EditorClassIdentifier:
+  id: 05_critical
+  displayName: "Recuperaci\xF3n cr\xEDtica"
+  description: Recover 8 medical supplies from both northern buildings and extract
+    successfully.
+  type: 0
+  targetId: debug_medical_supplies
+  requiredCount: 8
+  requiresExtraction: 1
+  rewardMoney: 1000
+  rewardXP: 250

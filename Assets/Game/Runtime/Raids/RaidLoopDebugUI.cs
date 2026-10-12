@@ -22,7 +22,6 @@ namespace Outbreak.Raids
         private bool inventoryOpen;
         private string feedback;
         private float feedbackUntil;
-        private bool loadoutTab;
         private Vector2 inventoryScroll, containerScroll;
         private string inspected;
 
@@ -81,7 +80,7 @@ namespace Outbreak.Raids
                 var mission = flow.Mission; var progress = flow.MissionProgress;
                 string instruction = progress.count >= mission.RequiredCount ? "EXTRACT" : "RECOVER";
                 if (!inventoryOpen && interactor.ActivePanel == null)
-                    GUI.Box(new Rect(920, 20, 340, 78), $"{mission.DisplayName}\nSupplies {progress.count}/{mission.RequiredCount} · {instruction}");
+                    GUI.Box(new Rect(920, 20, 340, 78), $"{mission.DisplayName}\n{mission.Type} {progress.count}/{mission.RequiredCount} · {instruction}");
             }
             if (flow.State == GameState.Raid)
                 foreach (var zone in FindObjectsByType<ExtractionZone>(FindObjectsSortMode.None))
@@ -122,12 +121,14 @@ namespace Outbreak.Raids
             for (int i = 0; i < items.Count; i++)
             {
                 var stack = items[i];
+                TacticalUI.ItemCard(stack.Item,stack.Quantity);
                 GUILayout.BeginHorizontal();
                 Color previous = GUI.color; GUI.color = RarityPalette.Color(stack.Item.Rarity);
                 GUILayout.Label($"{stack.Item.Rarity}   /   {TacticalUI.Name(stack.Item.DisplayName)} ×{stack.Quantity}");
                 GUI.color = previous;
                 bool take = GUILayout.Button("TAKE", GUILayout.Width(130));
                 GUILayout.EndHorizontal();
+                TacticalUI.EndCard();
                 if (take)
                 {
                     if (!container.TryTake(i, session)) Message("Backpack full");
@@ -148,35 +149,35 @@ namespace Outbreak.Raids
         {
             if (session == null) return;
             TacticalUI.BeginPanel("FIELD KIT", $"BACKPACK {session.FoundLoot.Count} : {session.LootCapacity}     /     EXTRACT TO SECURE YOUR LOOT");
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button("INVENTORY")) loadoutTab = false;
-            if (GUILayout.Button("LOADOUT")) loadoutTab = true;
-            GUILayout.EndHorizontal();
             inventoryScroll = GUILayout.BeginScrollView(inventoryScroll);
             var equipment = session.Equipment;
-            if (loadoutTab)
-            foreach (LoadoutSlot slot in System.Enum.GetValues(typeof(LoadoutSlot)))
-            {
-                var stack = equipment.Get(slot);
-                GUILayout.Label($"{slot.ToString().ToUpperInvariant()}   /   {(stack == null ? "Empty" : TacticalUI.Name(stack.Item.DisplayName))}");
-            }
-            else
-            {
+            GUILayout.BeginHorizontal(); GUILayout.BeginVertical(GUILayout.Width(615));
+            TacticalUI.Heading("RAID INVENTORY");
             if (session.FoundLoot.Count == 0) GUILayout.Label("Backpack empty. Search containers and recover supplies.");
             for (int i = 0; i < session.FoundLoot.Count; i++)
             {
                 ItemStack stack = session.FoundLoot[i]; Color previous = GUI.color; GUI.color = RarityPalette.Color(stack.Item.Rarity);
+                GUI.color=previous; TacticalUI.ItemCard(stack.Item,stack.Quantity);
                 GUILayout.BeginHorizontal();
                 GUILayout.Label($"{stack.Item.Rarity}   /   {TacticalUI.Name(stack.Item.DisplayName)} ×{stack.Quantity}"); GUI.color = previous;
                 if (GUILayout.Button("INSPECT", GUILayout.Width(130))) inspected = TacticalUI.Name(stack.Item.DisplayName) + " — " + stack.Item.Description;
                 bool discard = GUILayout.Button("DISCARD", GUILayout.Width(130));
                 GUILayout.EndHorizontal();
+                TacticalUI.EndCard();
                 if (discard)
                 {
                     session.RemoveLoot(stack.Item.Id, stack.Quantity); Message("Item discarded"); break;
                 }
             }
+            GUILayout.EndVertical(); GUILayout.BeginVertical(GUILayout.Width(335));
+            TacticalUI.Heading("LOADOUT");
+            foreach (LoadoutSlot slot in System.Enum.GetValues(typeof(LoadoutSlot)))
+            {
+                var stack = equipment.Get(slot);
+                TacticalUI.BeginCard(slot.ToString().ToUpperInvariant(),stack == null ? "EMPTY SLOT" : TacticalUI.Name(stack.Item.DisplayName),stack==null ? Color.gray : RarityPalette.Color(stack.Item.Rarity));
+                TacticalUI.EndCard();
             }
+            GUILayout.EndVertical(); GUILayout.EndHorizontal();
             GUILayout.EndScrollView();
             if (!string.IsNullOrEmpty(inspected)) GUILayout.Label(inspected);
             if (Time.unscaledTime < feedbackUntil) GUILayout.Label(feedback);

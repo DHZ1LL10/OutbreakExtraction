@@ -50,7 +50,7 @@ namespace Outbreak.Hub
                 { Message = "Could not save starter profile: " + Flow.LastMessage; return; }
             }
             if (mission == null) mission = Resources.Load<QuestDefinition>("RecoverSupplies");
-            if (mission == null || !Flow.EnableMission(mission))
+            if (mission == null || !Flow.InitializeAssignments(new[] { mission }.Concat(Resources.LoadAll<QuestDefinition>("Assignments").OrderBy(q=>q.Id))))
             { Message = "Mission could not be initialized: " + Flow.LastMessage; return; }
             Ready = Flow.State == GameState.Hub && Flow.Session == null; Message = "Hub ready.";
         }
@@ -82,7 +82,7 @@ namespace Outbreak.Hub
         public bool TurnInMission()
         {
             if (!Ready || Transitioning) return false;
-            bool success = Flow.TurnInMission(); Message = success ? "Assignment complete. +$500 / +100 XP" : Flow.LastMessage; return success;
+            bool success = Flow.TurnInMission(); Message = success ? $"Assignment complete. +${Flow.Mission.RewardMoney} / +{Flow.Mission.RewardXP} XP" : Flow.LastMessage; return success;
         }
         public bool Change(Func<GameFlow, bool> operation)
         {

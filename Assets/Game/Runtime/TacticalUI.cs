@@ -65,6 +65,27 @@ namespace Outbreak
             var color = GUI.color; GUI.color = Accent;
             GUILayout.Label(text, new GUIStyle(GUI.skin.label) { fontSize = 20, fontStyle = FontStyle.Bold }); GUI.color = color;
         }
+        public static void BeginCard(string title, string details, Color border, bool selected = false)
+        {
+            GUILayout.BeginVertical(GUI.skin.box);
+            var line = GUILayoutUtility.GetRect(1, 3, GUILayout.ExpandWidth(true));
+            var previous = GUI.color; GUI.color = selected ? Accent : border;
+            GUI.DrawTexture(line, Texture2D.whiteTexture); GUI.color = previous;
+            GUILayout.Label(title, new GUIStyle(GUI.skin.label) { fontStyle = FontStyle.Bold, fontSize = 17 });
+            if (!string.IsNullOrEmpty(details)) GUILayout.Label(details, new GUIStyle(GUI.skin.label) { fontSize = 13 });
+        }
+        public static void EndCard() { GUILayout.EndVertical(); GUILayout.Space(5); }
+        public static void ItemCard(Outbreak.Items.ItemDefinition item, int quantity, bool selected = false)
+        {
+            BeginCard(Name(item.DisplayName) + "    ×" + quantity,
+                item.Type.ToString().ToUpperInvariant() + "  /  " + item.Rarity + "  /  VALUE $" + item.SellValue,
+                Outbreak.Loot.RarityPalette.Color(item.Rarity), selected);
+        }
+        public static bool SelectButton(string text, bool selected)
+        {
+            var previous = GUI.backgroundColor; GUI.backgroundColor = selected ? Accent : Color.white;
+            bool clicked = GUILayout.Button(selected ? "● " + text : text); GUI.backgroundColor = previous; return clicked;
+        }
         public static void BeginPanel(string title, string subtitle)
         {
             GUI.Box(new Rect(110, 60, 1060, 600), "");

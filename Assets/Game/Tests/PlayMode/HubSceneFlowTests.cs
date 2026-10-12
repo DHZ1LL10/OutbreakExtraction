@@ -77,7 +77,7 @@ namespace Outbreak.Tests
             Assert.AreSame(optic, firearm.PrimaryState.Attachments[AttachmentSlot.Optic]); Assert.AreSame(manager.Flow, UnityEngine.Object.FindFirstObjectByType<Outbreak.Raids.RaidRuntimeContext>().Flow);
             // Presentation references must not replace gameplay receivers or NavMesh movement.
             var actors = UnityEngine.Object.FindObjectsByType<Outbreak.Infected.InfectedController>(FindObjectsSortMode.None);
-            Assert.AreEqual(6, actors.Length);
+            Assert.AreEqual(18, actors.Length);
             foreach (var actor in actors)
             {
                 var animator = actor.GetComponentInChildren<Animator>();

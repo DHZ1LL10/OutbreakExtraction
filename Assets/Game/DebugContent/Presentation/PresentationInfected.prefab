@@ -677,6 +677,7 @@ GameObject:
   - component: {fileID: 5152422483124241593}
   - component: {fileID: 360408385547718976}
   - component: {fileID: 3300425407277727975}
+  - component: {fileID: 7337646323332477871}
   m_Layer: 0
   m_Name: PresentationInfected
   m_TagString: Untagged
@@ -805,6 +806,19 @@ MonoBehaviour:
   m_EditorClassIdentifier:
   animator: {fileID: 8261892278913407545}
   headHitbox: {fileID: 2904724560122064002}
+  runner: 0
+--- !u!114 &7337646323332477871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3089344666675992743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7f568f61d705544f8420107eca59e5c, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
   runner: 0
 --- !u!1 &3204907613724572870
 GameObject:

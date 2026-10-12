@@ -20,7 +20,7 @@ using Object = UnityEngine.Object;
 namespace Outbreak.Editor
 {
     // Explicit, saved-scene presentation authoring. Never runs in Play and never regenerates gameplay.
-    public static class PresentationVisualPass
+    public static partial class PresentationVisualPass
     {
         private const string Content = "Assets/Game/DebugContent/Presentation";
         private const string Buildings = "Assets/Abandoned buildings/Prefab/abandoned_buildings/";
@@ -40,6 +40,7 @@ namespace Outbreak.Editor
         // Used in batch validation against a copy. Existing scenes are opened, never regenerated.
         public static void ApplySavedScenes()
         {
+            CreateAssignments();
             foreach (var name in new[] { "RaidLoop_Test", "Hub_Test" })
             {
                 var scene = EditorSceneManager.OpenScene("Assets/Game/Scenes/" + name + ".unity", OpenSceneMode.Single);
@@ -135,6 +136,7 @@ namespace Outbreak.Editor
             Box("Barricade base", props, new Vector3(1, .6f,17), new Vector3(9,1.2f,.65f), timber);
             // Original LOS collider remains the authoritative central wall.
             foreach (var r in geometry.GetComponentsInChildren<MeshRenderer>().Where(r => r.name == "Central LOS wall")) r.sharedMaterial = timber;
+            ExpandRaid(scene, geometry.transform, environment, props, proxies, concrete, paint);
             foreach (var container in InScene<LootContainer>(scene)) LootVisual(container.gameObject);
             foreach (var pickup in InScene<WorldItem>(scene)) PickupVisual(pickup.gameObject);
             foreach (var zone in InScene<ExtractionZone>(scene))
@@ -154,6 +156,7 @@ namespace Outbreak.Editor
             BakeNavigationAsset(surface);
             VerifyPaths(scene);
             Lighting(scene,false);
+            Overcast(scene);
         }
         private static void BakeNavigationAsset(NavMeshSurface surface)
         {
@@ -294,13 +297,13 @@ namespace Outbreak.Editor
             var old=view.transform.Find("VisualModel");if(old!=null)Object.DestroyImmediate(old.gameObject);
             foreach(var renderer in view.GetComponentsInChildren<Renderer>(true))renderer.enabled=false;
             var model=Model(rifle ? "Assets/DelthorGames/AKM/Prefabs/AKM.prefab" : Props+"Pistol1.prefab",view.transform,"VisualModel",Vector3.zero,Quaternion.identity,Vector3.one);
-            const float scale=.82f;
+            float scale=rifle ? .92f : .82f;
             model.transform.localPosition=(rifle ? new Vector3(0,-.064f,.1f):new Vector3(0,-.11f,0))*scale;
             model.transform.localRotation=Quaternion.Euler(0,rifle ? 180:90,0);model.transform.localScale=Vector3.one*(rifle ? .042f:1)*scale;
             foreach(var t in model.GetComponentsInChildren<Transform>(true))t.gameObject.layer=2;
             foreach(var renderer in model.GetComponentsInChildren<Renderer>()){renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;}
             var so=new SerializedObject(view);
-            so.FindProperty("hipPosition").vector3Value=rifle?new Vector3(.20f,-.18f,.52f):new Vector3(.15f,-.17f,.52f);
+            so.FindProperty("hipPosition").vector3Value=rifle?new Vector3(.20f,-.18f,.49f):new Vector3(.15f,-.17f,.52f);
             so.FindProperty("adsPosition").vector3Value=rifle?new Vector3(0,-.046f*scale,.52f):new Vector3(0,-.044f*scale,.52f);
             string magName=rifle?"Cube.003_low":"Pistol1_Magazine";
             var magazine=model.GetComponentsInChildren<Transform>(true).FirstOrDefault(t=>t.name==magName);
@@ -328,7 +331,7 @@ namespace Outbreak.Editor
             if(existing!=null)
             {
                 var contents=PrefabUtility.LoadPrefabContents(path);
-                try { InfectedMaterials(contents); PrefabUtility.SaveAsPrefabAsset(contents,path); }
+                try { InfectedMaterials(contents); MissionCredit(contents,runner); PrefabUtility.SaveAsPrefabAsset(contents,path); }
                 finally { PrefabUtility.UnloadPrefabContents(contents); }
                 return AssetDatabase.LoadAssetAtPath<InfectedController>(path);
             }
@@ -347,6 +350,7 @@ namespace Outbreak.Editor
                 var aso=new SerializedObject(adapter);aso.FindProperty("runner").boolValue=runner;aso.ApplyModifiedPropertiesWithoutUndo();
                 var presentation=root.GetComponent<InfectedPresentation>();var pso=new SerializedObject(presentation);pso.FindProperty("useAnimatedPose").boolValue=true;pso.ApplyModifiedPropertiesWithoutUndo();
                 InfectedMaterials(root);
+                MissionCredit(root,runner);
                 return PrefabUtility.SaveAsPrefabAsset(root,path).GetComponent<InfectedController>();
             }
             finally{PrefabUtility.UnloadPrefabContents(root);}
@@ -465,6 +469,12 @@ namespace Outbreak.Editor
             {
                 if(!NavMesh.SamplePosition(container.transform.position,out var loot,1.75f,NavMesh.AllAreas))throw new InvalidOperationException("Loot has no accessible floor: "+container.name);
                 var path=new NavMeshPath();if(!NavMesh.CalculatePath(origin.position,loot.position,NavMesh.AllAreas,path)||path.status!=NavMeshPathStatus.PathComplete)throw new InvalidOperationException("Loot building inaccessible: "+container.name);
+            }
+            var destinations=InScene<WorldItem>(scene).Select(p=>p.transform.position).Concat(new[]{new Vector3(-22,0,45),new Vector3(-22,0,75),new Vector3(22,0,60)});
+            foreach(var destination in destinations)
+            {
+                if(!NavMesh.SamplePosition(destination,out var hit,1.5f,NavMesh.AllAreas))throw new InvalidOperationException("Supplies/alternate route off NavMesh: "+destination);
+                var path=new NavMeshPath();if(!NavMesh.CalculatePath(origin.position,hit.position,NavMesh.AllAreas,path)||path.status!=NavMeshPathStatus.PathComplete)throw new InvalidOperationException("Supplies/alternate route disconnected: "+destination);
             }
             var zone=InScene<ExtractionZone>(scene).Single();var route=new NavMeshPath();
             if(!NavMesh.SamplePosition(zone.transform.position,out var extraction,2,NavMesh.AllAreas)||!NavMesh.CalculatePath(origin.position,extraction.position,NavMesh.AllAreas,route)||route.status!=NavMeshPathStatus.PathComplete)throw new InvalidOperationException("Extraction unreachable.");

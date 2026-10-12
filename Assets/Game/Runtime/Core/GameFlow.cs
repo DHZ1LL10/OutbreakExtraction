@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Outbreak.Economy;
 using Outbreak.Inventory;
 using Outbreak.Items;
@@ -24,12 +26,38 @@ namespace Outbreak.Core
         public QuestDefinition Mission { get; private set; }
         public QuestProgress MissionProgress => Mission == null ? null : Profile.Quests.Find(q => q.questId == Mission.Id);
         public event Action MissionChanged;
+        private readonly List<QuestDefinition> assignments = new List<QuestDefinition>();
+        public IReadOnlyList<QuestDefinition> Assignments => assignments;
+        public bool InitializeAssignments(IEnumerable<QuestDefinition> definitions)
+        {
+            if (State != GameState.Hub) return false;
+            var list = definitions.Where(d => d != null).Distinct().ToArray();
+            if (list.Length == 0 || list.Any(d => !ValidMission(d)) || list.Select(d=>d.Id).Distinct().Count()!=list.Length) return false;
+            if (!CommitHubChange(f => {
+                foreach (var definition in list)
+                    if (!f.Profile.Quests.Any(q=>q.questId==definition.Id)) f.Profile.Quests.Add(new QuestProgress { questId=definition.Id,state=QuestState.Available });
+                return true;
+            })) return false;
+            assignments.Clear(); assignments.AddRange(list);
+            var active = Profile.Quests.FirstOrDefault(q=>q.state==QuestState.Active || q.state==QuestState.ReadyToTurnIn);
+            Mission = list.FirstOrDefault(d=>d.Id==active?.questId) ?? list[0];
+            MissionChanged?.Invoke(); return true;
+        }
+        private bool ValidMission(QuestDefinition d) => d != null && !string.IsNullOrWhiteSpace(d.Id) && d.RequiresExtraction &&
+            d.RequiredCount > 0 && d.RewardMoney >= 0 && d.RewardXP >= 0 &&
+            ((d.Type == QuestType.Collect && catalog.Items.Any(i=>i.Id==d.TargetId)) ||
+             (d.Type == QuestType.Kill && (d.TargetId == "infected" || d.TargetId == "runner" || d.TargetId == "normal")));
+        public void RecordInfectedKill(bool runner)
+        {
+            if (State != GameState.Raid || Mission?.Type != QuestType.Kill || MissionProgress?.state != QuestState.Active) return;
+            if (Mission.TargetId != "infected" && Mission.TargetId != (runner ? "runner" : "normal")) return;
+            MissionProgress.Advance(Mission, 1); MissionChanged?.Invoke();
+        }
 
         public bool EnableMission(QuestDefinition definition)
         {
-            if (definition == null || definition.Type != QuestType.Collect || !definition.RequiresExtraction ||
-                definition.RequiredCount <= 0 || definition.RewardMoney < 0 || definition.RewardXP < 0 ||
-                catalog.Get(definition.TargetId).Type != ItemType.Medical || State != GameState.Hub) return false;
+            if (State != GameState.Hub || !ValidMission(definition) || Profile.Quests.Any(q=>q.questId!=definition.Id &&
+                (q.state==QuestState.Active || q.state==QuestState.ReadyToTurnIn))) return false;
             Mission = definition;
             if (MissionProgress != null) return true;
             bool saved = CommitHubChange(f => { f.Profile.Quests.Add(new QuestProgress { questId = definition.Id, state = QuestState.Available }); return true; });
@@ -37,7 +65,8 @@ namespace Outbreak.Core
         }
         public bool AcceptMission()
         {
-            if (MissionProgress?.state != QuestState.Available) return false;
+            if (MissionProgress?.state != QuestState.Available || Profile.Quests.Any(q=>q.questId!=Mission.Id &&
+                (q.state==QuestState.Active || q.state==QuestState.ReadyToTurnIn))) return false;
             bool saved = CommitHubChange(f => f.MissionProgress.Activate());
             if (saved) MissionChanged?.Invoke(); return saved;
         }
@@ -51,7 +80,7 @@ namespace Outbreak.Core
         private void SyncMissionLoot()
         {
             var progress = MissionProgress;
-            if (progress == null || progress.state != QuestState.Active || Session == null) return;
+            if (progress == null || progress.state != QuestState.Active || Session == null || Mission.Type != QuestType.Collect) return;
             int count = 0;
             foreach (var stack in Session.FoundLoot)
                 if (stack.Item.Id == Mission.TargetId) count = (int)Math.Min((long)count + stack.Quantity, Mission.RequiredCount);
