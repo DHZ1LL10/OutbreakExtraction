@@ -33,7 +33,8 @@ namespace Outbreak
             skin = UnityEngine.Object.Instantiate(GUI.skin); skin.hideFlags = HideFlags.HideAndDontSave;
             var panel = Flat(new Color(.055f, .068f, .072f, .96f));
             var button = Flat(new Color(.14f, .17f, .17f, .98f));
-            var hover = Flat(new Color(.28f, .32f, .26f));
+            // A restrained olive hover makes the active card/action visible without turning the UI into a bright HUD.
+            var hover = Flat(new Color(.32f, .37f, .28f));
             skin.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             skin.label.fontSize = 16; skin.label.normal.textColor = new Color(.86f, .88f, .85f);
             skin.label.padding = new RectOffset(4, 4, 2, 2); skin.label.wordWrap = true;

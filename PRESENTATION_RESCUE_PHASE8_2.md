@@ -44,3 +44,7 @@
 10. Probar una muerte: caída/fade y botón Return To Hub visibles. Confirmar pérdida de equipo y loot según reglas existentes.
 
 No se añade contenido nuevo ni fase posterior. No crear tag phase-8 hasta la validación visual manual.
+
+## Micro polish 8.3
+
+The existing tactical buttons now use a slightly stronger olive hover state so cards and actions remain readable during keyboard/mouse navigation. No data flow or gameplay contract changed. No suitable first-person arms asset was found among the imported humanoid characters; they remain untouched.
