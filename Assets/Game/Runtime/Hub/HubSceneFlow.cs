@@ -7,6 +7,7 @@ using Outbreak.Loadouts;
 using Outbreak.Maps;
 using Outbreak.Player;
 using Outbreak.Weapons;
+using Outbreak.Quests;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -21,6 +22,7 @@ namespace Outbreak.Hub
         [SerializeField] private RaidMapDefinition raidMap;
         [SerializeField] private ItemDefinition[] starterItems;
         [SerializeField, Min(0)] private int startingMoney = 1500;
+        [SerializeField] private QuestDefinition mission;
         public static HubSceneFlow Instance { get; private set; }
         private GameManager manager;
         public GameFlow Flow => manager != null ? manager.Flow : null;
@@ -47,6 +49,9 @@ namespace Outbreak.Hub
                 if (!Flow.CommitHubChange(f => f.Profile.Wallet.Credit(startingMoney) && starterItems.All(i => f.Profile.Stash.AddItem(i, i.Type == ItemType.Ammo ? Mathf.Min(60, i.MaxStack) : 1))))
                 { Message = "Could not save starter profile: " + Flow.LastMessage; return; }
             }
+            if (mission == null) mission = Resources.Load<QuestDefinition>("RecoverSupplies");
+            if (mission == null || !Flow.EnableMission(mission))
+            { Message = "Mission could not be initialized: " + Flow.LastMessage; return; }
             Ready = Flow.State == GameState.Hub && Flow.Session == null; Message = "Hub ready.";
         }
         private void OnDestroy()
@@ -68,6 +73,16 @@ namespace Outbreak.Hub
                 Message = "Raid active.";
             }
             else if (scene.name == "Hub_Test") { Ready = Flow?.State == GameState.Hub && Flow.Session == null; Message = "Returned to Hub."; }
+        }
+        public bool AcceptMission()
+        {
+            if (!Ready || Transitioning) return false;
+            bool success = Flow.AcceptMission(); Message = success ? "Mission accepted." : Flow.LastMessage; return success;
+        }
+        public bool TurnInMission()
+        {
+            if (!Ready || Transitioning) return false;
+            bool success = Flow.TurnInMission(); Message = success ? "Assignment complete. +$500 / +100 XP" : Flow.LastMessage; return success;
         }
         public bool Change(Func<GameFlow, bool> operation)
         {

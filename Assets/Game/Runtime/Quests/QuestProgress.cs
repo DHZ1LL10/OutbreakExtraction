@@ -25,8 +25,18 @@ namespace Outbreak.Quests
         {
             if (definition == null || definition.Id != questId || state != QuestState.Active || amount <= 0 || definition.RequiredCount <= 0) return false;
             count = (int)Math.Min((long)count + amount, definition.RequiredCount);
-            if (count == definition.RequiredCount) state = QuestState.Completed;
+            if (count == definition.RequiredCount && !definition.RequiresExtraction) state = QuestState.Completed;
             return true;
+        }
+        public bool ConfirmExtraction(QuestDefinition definition)
+        {
+            if (definition == null || definition.Id != questId || !definition.RequiresExtraction || state != QuestState.Active || count < definition.RequiredCount) return false;
+            state = QuestState.ReadyToTurnIn; return true;
+        }
+        public bool TurnIn()
+        {
+            if (state != QuestState.ReadyToTurnIn) return false;
+            state = QuestState.Completed; return true;
         }
         public bool Claim()
         {

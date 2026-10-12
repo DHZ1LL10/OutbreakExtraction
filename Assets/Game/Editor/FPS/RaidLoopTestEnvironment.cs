@@ -205,6 +205,10 @@ namespace Outbreak.Editor
                 entry.FindPropertyRelative("weight").floatValue = weights[i]; entry.FindPropertyRelative("minQuantity").intValue = 1;
                 entry.FindPropertyRelative("maxQuantity").intValue = items[i].Type == ItemType.Ammo ? 12 : items[i].Rarity == ItemRarity.Common ? 3 : 1;
             }
+            if (name == "MedicalLoot")
+                for (int i = 0; i < items.Length; i++)
+                    if (items[i].Id == "debug_medical_supplies")
+                    { var entry = entries.GetArrayElementAtIndex(i); entry.FindPropertyRelative("minQuantity").intValue = 2; entry.FindPropertyRelative("maxQuantity").intValue = 3; }
             so.FindProperty("dropChance").floatValue = 1; so.ApplyModifiedPropertiesWithoutUndo(); table.Validate(); return table;
         }
         private static void Container(string name, LootContainerType type, Vector3 position, LootTable table, Material material, int rolls, int seed)

@@ -15,8 +15,8 @@ MonoBehaviour:
   entries:
   - item: {fileID: 11400000, guid: 25bb6a2afbd1e24439c3ef24c3b8064a, type: 2}
     weight: 7
-    minQuantity: 1
-    maxQuantity: 1
+    minQuantity: 2
+    maxQuantity: 3
   - item: {fileID: 11400000, guid: f19431486e00e2a4c82957b5ce67832f, type: 2}
     weight: 2
     minQuantity: 1

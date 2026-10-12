@@ -6,6 +6,7 @@ using Outbreak.Items;
 using Outbreak.Loadouts;
 using Outbreak.Loot;
 using Outbreak.Weapons;
+using Outbreak.Quests;
 using UnityEngine;
 
 namespace Outbreak.Hub
@@ -39,7 +40,7 @@ namespace Outbreak.Hub
                 case HubStationKind.Loadout: DrawLoadout(profile); break;
                 case HubStationKind.Trader: DrawTrader(profile); break;
                 case HubStationKind.Workbench: DrawWorkbench(profile); break;
-                case HubStationKind.Missions: GUILayout.Label("No active assignment"); break;
+                case HubStationKind.Missions: DrawMission(); break;
                 case HubStationKind.Deploy:
                     GUILayout.Label("Quarantine Outskirts | Difficulty: Debug/Normal");
                     DrawEquipment(profile, false);
@@ -51,6 +52,29 @@ namespace Outbreak.Hub
             GUILayout.Label(hub.Message);
             if (GUILayout.Button("Close (Escape)")) interactor.ClosePanel();
             GUILayout.EndArea();
+        }
+        private void DrawMission()
+        {
+            var definition = Hub.Flow.Mission; var progress = Hub.Flow.MissionProgress;
+            if (definition == null || progress == null) { GUILayout.Label("No active assignment"); return; }
+            GUILayout.Label(definition.DisplayName);
+            switch (progress.state)
+            {
+                case QuestState.Available:
+                    GUILayout.Label(definition.Description);
+                    if (GUILayout.Button("ACCEPT")) Hub.AcceptMission();
+                    break;
+                case QuestState.Active:
+                    GUILayout.Label($"ACTIVE MISSION\nMedical Supplies: {progress.count} / {definition.RequiredCount}\nExtract successfully");
+                    break;
+                case QuestState.ReadyToTurnIn:
+                    GUILayout.Label("MISSION COMPLETE");
+                    GUILayout.Label($"Reward: +${definition.RewardMoney} / +{definition.RewardXP} XP");
+                    if (GUILayout.Button("TURN IN")) Hub.TurnInMission();
+                    break;
+                case QuestState.Completed: case QuestState.Claimed: GUILayout.Label("Assignment complete."); break;
+            }
+            GUILayout.Label($"Money: ${Hub.Flow.Profile.Wallet.Balance} | XP: {Hub.Flow.Profile.XP}");
         }
         private bool Fits(LoadoutSlot slot, ItemDefinition item)
         {

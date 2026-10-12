@@ -6,6 +6,7 @@ using Outbreak.Loadouts;
 using Outbreak.Maps;
 using Outbreak.Persistence;
 using Outbreak.Raids;
+using Outbreak.Quests;
 
 namespace Outbreak.Core
 {
@@ -20,6 +21,42 @@ namespace Outbreak.Core
         public RaidSession Session { get; private set; }
         public GameState State { get; private set; } = GameState.Hub;
         public string LastMessage { get; private set; }
+        public QuestDefinition Mission { get; private set; }
+        public QuestProgress MissionProgress => Mission == null ? null : Profile.Quests.Find(q => q.questId == Mission.Id);
+        public event Action MissionChanged;
+
+        public bool EnableMission(QuestDefinition definition)
+        {
+            if (definition == null || definition.Type != QuestType.Collect || !definition.RequiresExtraction ||
+                definition.RequiredCount <= 0 || definition.RewardMoney < 0 || definition.RewardXP < 0 ||
+                catalog.Get(definition.TargetId).Type != ItemType.Medical || State != GameState.Hub) return false;
+            Mission = definition;
+            if (MissionProgress != null) return true;
+            bool saved = CommitHubChange(f => { f.Profile.Quests.Add(new QuestProgress { questId = definition.Id, state = QuestState.Available }); return true; });
+            if (saved) MissionChanged?.Invoke(); return saved;
+        }
+        public bool AcceptMission()
+        {
+            if (MissionProgress?.state != QuestState.Available) return false;
+            bool saved = CommitHubChange(f => f.MissionProgress.Activate());
+            if (saved) MissionChanged?.Invoke(); return saved;
+        }
+        public bool TurnInMission()
+        {
+            if (MissionProgress?.state != QuestState.ReadyToTurnIn) return false;
+            bool saved = CommitHubChange(f => f.Profile.Wallet.Credit(Mission.RewardMoney) &&
+                f.Profile.AddXP(Mission.RewardXP) && f.MissionProgress.TurnIn());
+            if (saved) MissionChanged?.Invoke(); return saved;
+        }
+        private void SyncMissionLoot()
+        {
+            var progress = MissionProgress;
+            if (progress == null || progress.state != QuestState.Active || Session == null) return;
+            int count = 0;
+            foreach (var stack in Session.FoundLoot)
+                if (stack.Item.Id == Mission.TargetId) count = (int)Math.Min((long)count + stack.Quantity, Mission.RequiredCount);
+            if (progress.count != count) { progress.count = count; MissionChanged?.Invoke(); }
+        }
 
         public GameFlow(ItemCatalog catalog, SaveService saves)
         {
@@ -102,13 +139,17 @@ namespace Outbreak.Core
             map.Validate();
             var session = new RaidSession(Profile.Loadout, map, backpackCapacity);
             var checkpoint = CloneProfile();
+            var quest = Mission == null ? null : checkpoint.Quests.Find(q => q.questId == Mission.Id);
+            if (quest?.state == QuestState.Active) quest.count = 0;
             checkpoint.Loadout.Clear();
             State = GameState.LoadingRaid;
             // The on-disk profile no longer owns deployed gear, even if the application closes.
             if (!Persist(checkpoint)) { State = GameState.Hub; return false; }
             Profile = checkpoint;
             Session = session;
+            Session.LootChanged += SyncMissionLoot;
             State = GameState.Raid;
+            MissionChanged?.Invoke();
             return true;
         }
         public bool ExtractSuccessfully()
@@ -116,20 +157,27 @@ namespace Outbreak.Core
             if (State != GameState.Raid || Session == null) return Reject("No active raid.");
             var candidate = CloneProfile();
             if (!candidate.Stash.TryAddRange(Session.Survivors())) return Reject("Stash full; raid remains active. Remove loot or equipment and retry.");
+            var quest = Mission == null ? null : candidate.Quests.Find(q => q.questId == Mission.Id);
+            quest?.ConfirmExtraction(Mission);
             if (!Persist(candidate)) return false;
             Profile = candidate;
+            Session.LootChanged -= SyncMissionLoot;
             Session.Close();
             Session = null;
             State = GameState.RaidSuccess;
+            MissionChanged?.Invoke();
             return true;
         }
         public bool FailRaid()
         {
             if (State != GameState.Raid || Session == null) return Reject("No active raid.");
+            if (MissionProgress?.state == QuestState.Active) MissionProgress.count = 0;
+            Session.LootChanged -= SyncMissionLoot;
             Session.Close();
             Session = null;
             State = GameState.RaidFailed;
             LastMessage = "Raid failed. All deployed equipment and loot lost.";
+            MissionChanged?.Invoke();
             return true;
         }
         public bool ReturnToHub()

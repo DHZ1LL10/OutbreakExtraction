@@ -54,6 +54,7 @@ namespace Outbreak.Editor
             var manager = new GameObject("Persistent Game Manager").AddComponent<GameManager>();
             Reference(manager, "catalog", catalog); Boolean(manager, "persistAcrossScenes", true);
             var driver = manager.gameObject.AddComponent<HubSceneFlow>();
+            Reference(driver, "mission", RecoverSuppliesMissionContent.Ensure());
             Array(driver, "weapons", new Object[] { rifle, pistol }); Array(driver, "attachments", attachments);
             Array(driver, "traderStock", new Object[] { rifle.item, pistol.item, rifle.ammoType, pistol.ammoType, medical });
             Array(driver, "starterItems", new Object[] { rifle.item, pistol.item, rifle.ammoType, pistol.ammoType, medical }); Reference(driver, "raidMap", map);

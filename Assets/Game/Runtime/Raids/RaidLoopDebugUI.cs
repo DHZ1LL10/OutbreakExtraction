@@ -71,6 +71,12 @@ namespace Outbreak.Raids
             var flow = context?.Flow;
             if (flow == null) return;
             DrawStatus(flow);
+            if (flow.State == GameState.Raid && flow.MissionProgress?.state == Outbreak.Quests.QuestState.Active)
+            {
+                var mission = flow.Mission; var progress = flow.MissionProgress;
+                string instruction = progress.count >= mission.RequiredCount ? "Extract to complete objective" : "Extraction required";
+                GUI.Box(new Rect(Screen.width / 2f - 150, 20, 300, 76), $"MISSION\nMedical Supplies: {progress.count} / {mission.RequiredCount}\n{instruction}");
+            }
             if (flow.State == GameState.Raid)
                 foreach (var zone in FindObjectsByType<ExtractionZone>(FindObjectsSortMode.None))
                 {

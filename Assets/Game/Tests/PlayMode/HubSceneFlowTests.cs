@@ -49,6 +49,7 @@ namespace Outbreak.Tests
             managerObject.SetActive(true); yield return null;
             yield return SceneManager.LoadSceneAsync("Hub_Test"); yield return null;
             Assert.AreSame(manager, GameManager.Persistent); Assert.AreSame(driver, HubSceneFlow.Instance); Assert.IsTrue(driver.Ready);
+            Assert.IsTrue(driver.AcceptMission());
             Assert.IsTrue(driver.Equip(LoadoutSlot.Primary, rifle.item));
             var optic = attachments.First(a => a.slot == AttachmentSlot.Optic);
             Assert.IsTrue(driver.Configure(LoadoutSlot.Primary, optic.slot, optic));
@@ -59,10 +60,15 @@ namespace Outbreak.Tests
             var firearm = UnityEngine.Object.FindFirstObjectByType<FirearmController>();
             Assert.AreEqual(rifle.WeaponId, firearm.PrimaryState.Definition.WeaponId); Assert.IsNull(firearm.SecondaryState);
             Assert.AreSame(optic, firearm.PrimaryState.Attachments[AttachmentSlot.Optic]); Assert.AreSame(manager.Flow, UnityEngine.Object.FindFirstObjectByType<Outbreak.Raids.RaidRuntimeContext>().Flow);
-            Assert.IsTrue(manager.Flow.Session.AddLoot(new[] { new ItemStack(scrap, 2) })); Assert.IsTrue(manager.Flow.ExtractSuccessfully()); Assert.IsTrue(driver.ReturnToHub());
+            Assert.IsTrue(manager.Flow.Session.AddLoot(new[] { new ItemStack(scrap, 2), new ItemStack(catalog.Get("debug_medical_supplies"), 2) }));
+            Assert.AreEqual(Outbreak.Quests.QuestState.Active, manager.Flow.MissionProgress.state);
+            Assert.IsTrue(manager.Flow.ExtractSuccessfully()); Assert.AreEqual(Outbreak.Quests.QuestState.ReadyToTurnIn, manager.Flow.MissionProgress.state);
+            Assert.IsTrue(driver.ReturnToHub());
             for (int i = 0; i < 600 && SceneManager.GetActiveScene().name != "Hub_Test"; i++) yield return null;
             yield return null;
             Assert.AreSame(manager, GameManager.Persistent); Assert.AreEqual(2, manager.Flow.Profile.Stash.GetItemCount(scrap.Id)); Assert.IsNull(manager.Flow.Session);
+            Assert.IsTrue(driver.TurnInMission()); Assert.IsFalse(driver.TurnInMission());
+            Assert.AreEqual(2000, manager.Flow.Profile.Wallet.Balance); Assert.AreEqual(100, manager.Flow.Profile.XP);
             Assert.IsTrue(driver.Equip(LoadoutSlot.Primary, rifle.item)); Assert.IsTrue(driver.Deploy());
             for (int i = 0; i < 600 && SceneManager.GetActiveScene().name != "RaidLoop_Test"; i++) yield return null;
             yield return null;
@@ -70,7 +76,9 @@ namespace Outbreak.Tests
             for (int i = 0; i < 600 && SceneManager.GetActiveScene().name != "Hub_Test"; i++) yield return null;
             yield return null;
             Assert.AreEqual(2, manager.Flow.Profile.Stash.GetItemCount(scrap.Id)); Assert.AreEqual(0, manager.Flow.Profile.Stash.GetItemCount(rifle.WeaponId));
-            var loaded = new GameFlow(catalog, new SaveService(fileName: saveName)); Assert.IsTrue(loaded.Load()); Assert.AreEqual(2, loaded.Profile.Stash.GetItemCount(scrap.Id)); Assert.AreEqual(1500, loaded.Profile.Wallet.Balance);
+            var loaded = new GameFlow(catalog, new SaveService(fileName: saveName)); Assert.IsTrue(loaded.Load()); Assert.AreEqual(2, loaded.Profile.Stash.GetItemCount(scrap.Id)); Assert.AreEqual(2000, loaded.Profile.Wallet.Balance); Assert.AreEqual(100, loaded.Profile.XP);
+            loaded.EnableMission(Resources.Load<Outbreak.Quests.QuestDefinition>("RecoverSupplies"));
+            Assert.AreEqual(Outbreak.Quests.QuestState.Completed, loaded.MissionProgress.state);
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using Outbreak.Inventory;
 using Outbreak.Loadouts;
 using Outbreak.Maps;
@@ -14,6 +15,7 @@ namespace Outbreak.Raids
         public Loadout Equipment => equipment.Copy();
         public IReadOnlyList<ItemStack> FoundLoot => foundLoot.Slots;
         public int LootCapacity => foundLoot.Capacity;
+        public event Action LootChanged;
 
         internal RaidSession(Loadout hubLoadout, RaidMapDefinition map, int backpackCapacity)
         {
@@ -21,8 +23,16 @@ namespace Outbreak.Raids
             equipment = hubLoadout.Copy();
             foundLoot = new BackpackInventory(backpackCapacity);
         }
-        public bool AddLoot(IEnumerable<ItemStack> loot) => IsActive && foundLoot.TryAddRange(loot);
-        public bool RemoveLoot(string id, int quantity) => IsActive && foundLoot.RemoveItem(id, quantity);
+        public bool AddLoot(IEnumerable<ItemStack> loot)
+        {
+            if (!IsActive || !foundLoot.TryAddRange(loot)) return false;
+            LootChanged?.Invoke(); return true;
+        }
+        public bool RemoveLoot(string id, int quantity)
+        {
+            if (!IsActive || !foundLoot.RemoveItem(id, quantity)) return false;
+            LootChanged?.Invoke(); return true;
+        }
         public bool ConsumeEquipment(LoadoutSlot slot, int quantity = 1)
         {
             var stack = equipment.Get(slot);
