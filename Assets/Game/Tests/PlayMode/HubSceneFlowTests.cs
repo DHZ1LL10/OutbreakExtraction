@@ -60,6 +60,20 @@ namespace Outbreak.Tests
             var firearm = UnityEngine.Object.FindFirstObjectByType<FirearmController>();
             Assert.AreEqual(rifle.WeaponId, firearm.PrimaryState.Definition.WeaponId); Assert.IsNull(firearm.SecondaryState);
             Assert.AreSame(optic, firearm.PrimaryState.Attachments[AttachmentSlot.Optic]); Assert.AreSame(manager.Flow, UnityEngine.Object.FindFirstObjectByType<Outbreak.Raids.RaidRuntimeContext>().Flow);
+            // Presentation references must not replace gameplay receivers or NavMesh movement.
+            var actors = UnityEngine.Object.FindObjectsByType<Outbreak.Infected.InfectedController>(FindObjectsSortMode.None);
+            Assert.AreEqual(6, actors.Length);
+            foreach (var actor in actors)
+            {
+                var animator = actor.GetComponentInChildren<Animator>();
+                Assert.IsNotNull(animator); Assert.IsTrue(animator.isHuman); Assert.IsFalse(animator.applyRootMotion);
+                Assert.IsNotNull(actor.GetComponent<Outbreak.Infected.InfectedVisualAnimator>());
+                var head = actor.GetComponentsInChildren<DamageHitbox>().Single(h => h.zone == HitZone.Head);
+                Assert.AreSame(actor.GetComponent<Outbreak.Combat.InfectedHealth>(), head.Receiver);
+                Assert.Less(Vector3.Distance(head.transform.position, animator.GetBoneTransform(HumanBodyBones.Head).position), .12f);
+            }
+            foreach (var view in firearm.GetComponentsInChildren<WeaponViewModel>(true))
+                Assert.IsNotNull(view.transform.Find("VisualModel"));
             Assert.IsTrue(manager.Flow.Session.AddLoot(new[] { new ItemStack(scrap, 2), new ItemStack(catalog.Get("debug_medical_supplies"), 2) }));
             Assert.AreEqual(Outbreak.Quests.QuestState.Active, manager.Flow.MissionProgress.state);
             Assert.IsTrue(manager.Flow.ExtractSuccessfully()); Assert.AreEqual(Outbreak.Quests.QuestState.ReadyToTurnIn, manager.Flow.MissionProgress.state);

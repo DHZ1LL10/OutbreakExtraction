@@ -113,6 +113,9 @@ namespace Outbreak.Editor
             light.gameObject.AddComponent<UniversalAdditionalLightData>(); RenderSettings.sun = light;
             RenderSettings.ambientMode = AmbientMode.Flat; RenderSettings.ambientLight = new Color(0.37f, 0.39f, 0.4f);
 
+            // The presentation updater decorates the existing gameplay layout before saving.
+            scene.name = "RaidLoop_Test";
+            PresentationVisualPass.Apply(scene);
             const string path = "Assets/Game/Scenes/RaidLoop_Test.unity";
             AssetDatabase.SaveAssets(); EditorSceneManager.SaveScene(scene, path);
             var scenes = EditorBuildSettings.scenes.ToList();

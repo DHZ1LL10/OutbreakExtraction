@@ -79,6 +79,8 @@ namespace Outbreak.Editor
             var light = new GameObject("Directional Light").AddComponent<Light>(); light.type = LightType.Directional; light.intensity = 1;
             light.transform.rotation = Quaternion.Euler(50, -30, 0); light.gameObject.AddComponent<UniversalAdditionalLightData>();
             RenderSettings.sun = light; RenderSettings.ambientMode = AmbientMode.Flat; RenderSettings.ambientLight = new Color(.4f, .42f, .44f);
+            scene.name = "Hub_Test";
+            PresentationVisualPass.Apply(scene);
             AssetDatabase.SaveAssets(); EditorSceneManager.SaveScene(scene, scenePath);
             var scenes = EditorBuildSettings.scenes.ToList();
             scenes.RemoveAll(s => s.path == scenePath); scenes.Insert(0, new EditorBuildSettingsScene(scenePath, true));

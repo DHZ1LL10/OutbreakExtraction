@@ -8,6 +8,7 @@ namespace Outbreak.Infected
     public sealed class InfectedPresentation : MonoBehaviour
     {
         [SerializeField] private Transform visualRoot;
+        [SerializeField] private bool useAnimatedPose;
         [SerializeField, Min(0.1f)] private float collapseDuration = 0.7f;
         [SerializeField, Min(1)] private float corpseLifetime = 7;
         private InfectedHealth health;
@@ -43,15 +44,18 @@ namespace Outbreak.Infected
             if (diedAt >= 0)
             {
                 float t = Mathf.SmoothStep(0, 1, (Time.time - diedAt) / collapseDuration);
-                visualRoot.localPosition = Vector3.Lerp(deathPosition, basePosition + impulse + Vector3.up * 0.22f, t);
-                visualRoot.localRotation = Quaternion.Slerp(deathRotation, baseRotation * Quaternion.Euler(82, 0, 12), t);
+                if (!useAnimatedPose)
+                {
+                    visualRoot.localPosition = Vector3.Lerp(deathPosition, basePosition + impulse + Vector3.up * 0.22f, t);
+                    visualRoot.localRotation = Quaternion.Slerp(deathRotation, baseRotation * Quaternion.Euler(82, 0, 12), t);
+                }
                 if (Time.time - diedAt > corpseLifetime) { gameObject.SetActive(false); return; }
             }
             else
             {
                 float hit = Mathf.Clamp01((flashUntil - Time.time) / 0.12f);
                 float attack = Mathf.Clamp01((attackUntil - Time.time) / 0.2f);
-                visualRoot.localRotation = baseRotation * Quaternion.Euler(-hit * 5 + attack * 10, 0, hit * 3);
+                if (!useAnimatedPose) visualRoot.localRotation = baseRotation * Quaternion.Euler(-hit * 5 + attack * 10, 0, hit * 3);
             }
             properties.Clear();
             if (!health.IsAlive) properties.SetColor("_BaseColor", new Color(0.2f, 0.22f, 0.2f));
