@@ -18,7 +18,7 @@ namespace Outbreak.Player
         private void Start() => lean = GetComponentInChildren<IPlayerLeanState>();
         private void OnGUI()
         {
-            if (!showOverlay || motor == null) return;
+            if (!showOverlay || motor == null || !PresentationMode.ShowDiagnostics) return;
             GUI.Box(new Rect(12, 12, 340, 228), "OUTBREAK - FPS Debug");
             GUI.Label(new Rect(24, 38, 320, 200),
                 $"Speed: {motor.Speed:F2} m/s\nGrounded: {motor.IsGrounded}\nSprinting: {motor.IsSprinting}\nCrouching: {motor.IsCrouching}\nSlowWalk: {motor.IsWalkingSlow}\nLean: {lean?.LeanAmount ?? 0:F2}\nMantling: {motor.IsMantling}\nVertical Velocity: {motor.VerticalVelocity:F2} m/s\nWASD / Space / Shift / Ctrl / Alt / Q-E\nEscape: liberar cursor | Click: capturar");

@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Outbreak.Raids
 {
-    // Functional IMGUI for RaidLoop_Test only. Production UI can replace it without changing raid/domain APIs.
+    // Presentation screens consume the same raid/domain APIs as the original diagnostic adapter.
     [DisallowMultipleComponent]
     public sealed class RaidLoopDebugUI : MonoBehaviour
     {
@@ -22,6 +22,9 @@ namespace Outbreak.Raids
         private bool inventoryOpen;
         private string feedback;
         private float feedbackUntil;
+        private bool loadoutTab;
+        private Vector2 inventoryScroll, containerScroll;
+        private string inspected;
 
         private void Awake()
         {
@@ -70,95 +73,120 @@ namespace Outbreak.Raids
         {
             var flow = context?.Flow;
             if (flow == null) return;
+            using (new TacticalUI.Scope())
+            {
             DrawStatus(flow);
             if (flow.State == GameState.Raid && flow.MissionProgress?.state == Outbreak.Quests.QuestState.Active)
             {
                 var mission = flow.Mission; var progress = flow.MissionProgress;
-                string instruction = progress.count >= mission.RequiredCount ? "Extract to complete objective" : "Extraction required";
-                GUI.Box(new Rect(Screen.width / 2f - 150, 20, 300, 76), $"MISSION\nMedical Supplies: {progress.count} / {mission.RequiredCount}\n{instruction}");
+                string instruction = progress.count >= mission.RequiredCount ? "EXTRACT" : "RECOVER";
+                if (!inventoryOpen && interactor.ActivePanel == null)
+                    GUI.Box(new Rect(920, 20, 340, 78), $"{mission.DisplayName}\nSupplies {progress.count}/{mission.RequiredCount} · {instruction}");
             }
             if (flow.State == GameState.Raid)
                 foreach (var zone in FindObjectsByType<ExtractionZone>(FindObjectsSortMode.None))
                 {
-                    if (zone.IsCountingDown) GUI.Box(new Rect(Screen.width / 2f - 125, 120, 250, 80), $"EXTRACTION\nHOLD POSITION\n{zone.Remaining:0.0}");
-                    else if (zone.CancelledRecently) GUI.Box(new Rect(Screen.width / 2f - 125, 120, 250, 35), "EXTRACTION CANCELLED");
+                    if (zone.IsCountingDown) GUI.Box(new Rect(490, 120, 300, 96), $"EXTRACTION\nHOLD POSITION\n{zone.Remaining:0.0}");
+                    else if (zone.CancelledRecently) TacticalUI.Prompt("EXTRACTION CANCELLED", 120);
                 }
             if (interactor.ActivePanel is LootContainer container) DrawContainer(container, flow.Session);
             else if (inventoryOpen) DrawInventory(flow.Session);
             if (flow.State == GameState.RaidSuccess) DrawResult();
             else if (flow.State == GameState.RaidFailed) DrawFailure();
+            }
         }
         private void DrawStatus(GameFlow flow)
         {
-            GUI.Box(new Rect(12, 12, 355, 112), "RAID LOOP TEST");
+            if (PresentationMode.ShowDiagnostics)
+            {
+            GUI.Box(new Rect(12, 255, 355, 112), "RAID DIAGNOSTICS");
             string hp = health == null ? "--" : $"{health.CurrentHealth:0} / {health.MaxHealth:0}";
             int used = flow.Session?.FoundLoot.Count ?? 0, capacity = flow.Session?.LootCapacity ?? 0;
-            GUI.Label(new Rect(24, 38, 330, 80), $"HP: {hp}\nLoot: {used} / {capacity} slots\nTab: inventory | E: interact / lean right\nExtraction: hold position | F1-F4 attachments");
+            GUI.Label(new Rect(24, 280, 330, 80), $"HP: {hp}\nLoot: {used} / {capacity} slots\nTab: inventory | E: interact / lean right\nExtraction: hold position");
+            }
             if (interactor.ActivePanel == null && !inventoryOpen && interactor.Focused != null)
             {
                 string label = "[E] " + interactor.Focused.Prompt;
                 if (interactor.Focused is IHoldInteractable)
                     label += interactor.HoldProgress > 0 ? $"  {interactor.HoldProgress * 100:0}%" : " (hold)";
-                GUI.Box(new Rect(Screen.width / 2f - 115, Screen.height - 115, 230, 34), label);
+                TacticalUI.Prompt(label);
             }
-            if (Time.unscaledTime < feedbackUntil) GUI.Box(new Rect(Screen.width / 2f - 170, 18, 340, 34), feedback);
+            if (Time.unscaledTime < feedbackUntil) TacticalUI.Prompt(feedback, 580);
         }
         private void DrawContainer(LootContainer container, RaidSession session)
         {
             var items = container.Inventory.Contents;
-            float height = Mathf.Max(210, 125 + items.Count * 32);
-            Rect panel = new Rect(Screen.width / 2f - 260, Screen.height / 2f - height / 2, 520, height);
-            GUI.Box(panel, container.PanelTitle);
-            GUI.Label(new Rect(panel.x + 18, panel.y + 28, 460, 24), items.Count == 0 ? "Empty" : "Select an item or take everything that fits.");
+            TacticalUI.BeginPanel(container.PanelTitle, $"FIELD STORAGE     /     BACKPACK {session.FoundLoot.Count} : {session.LootCapacity}");
+            containerScroll = GUILayout.BeginScrollView(containerScroll);
+            GUILayout.Label(items.Count == 0 ? "Container empty" : "Recover supplies. Only extracted loot reaches your stash.");
             for (int i = 0; i < items.Count; i++)
             {
-                var stack = items[i]; float y = panel.y + 58 + i * 32;
+                var stack = items[i];
+                GUILayout.BeginHorizontal();
                 Color previous = GUI.color; GUI.color = RarityPalette.Color(stack.Item.Rarity);
-                GUI.Label(new Rect(panel.x + 20, y, 350, 28), $"{stack.Item.Rarity,-10} {stack.Item.DisplayName} x{stack.Quantity}");
+                GUILayout.Label($"{stack.Item.Rarity}   /   {TacticalUI.Name(stack.Item.DisplayName)} ×{stack.Quantity}");
                 GUI.color = previous;
-                if (GUI.Button(new Rect(panel.x + 395, y, 100, 25), "Take"))
+                bool take = GUILayout.Button("TAKE", GUILayout.Width(130));
+                GUILayout.EndHorizontal();
+                if (take)
                 {
                     if (!container.TryTake(i, session)) Message("Backpack full");
-                    else Message(stack.Item.Rarity >= ItemRarity.Rare ? $"Secured {stack.Item.Rarity}: {stack.Item.DisplayName}" : "Item added");
+                    else Message(stack.Item.Rarity >= ItemRarity.Rare ? $"Secured {stack.Item.Rarity}: {TacticalUI.Name(stack.Item.DisplayName)}" : "Item added");
                     break;
                 }
             }
-            if (GUI.Button(new Rect(panel.x + 20, panel.yMax - 42, 150, 28), "Take All"))
+            GUILayout.EndScrollView();
+            if (Time.unscaledTime < feedbackUntil) GUILayout.Label(feedback);
+            if (GUILayout.Button("TAKE ALL THAT FITS"))
             {
                 int count = container.TryTakeAll(session); Message(count > 0 ? $"Took {count} stack(s)" : "Backpack full or container empty");
             }
-            if (GUI.Button(new Rect(panel.xMax - 120, panel.yMax - 42, 100, 28), "Close")) interactor.ClosePanel();
+            if (GUILayout.Button("CLOSE    /    ESC · TAB")) interactor.ClosePanel();
+            TacticalUI.EndPanel();
         }
         private void DrawInventory(RaidSession session)
         {
-            Rect panel = new Rect(Screen.width / 2f - 300, Screen.height / 2f - 270, 600, 540);
-            GUI.Box(panel, "RAID INVENTORY");
-            if (session == null) { GUI.Label(new Rect(panel.x + 20, panel.y + 35, 400, 25), "No active raid."); return; }
-            GUI.Label(new Rect(panel.x + 20, panel.y + 35, 220, 24), "EQUIPMENT");
-            float y = panel.y + 62;
+            if (session == null) return;
+            TacticalUI.BeginPanel("FIELD KIT", $"BACKPACK {session.FoundLoot.Count} : {session.LootCapacity}     /     EXTRACT TO SECURE YOUR LOOT");
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("INVENTORY")) loadoutTab = false;
+            if (GUILayout.Button("LOADOUT")) loadoutTab = true;
+            GUILayout.EndHorizontal();
+            inventoryScroll = GUILayout.BeginScrollView(inventoryScroll);
             var equipment = session.Equipment;
-            foreach (LoadoutSlot slot in new[] { LoadoutSlot.Primary, LoadoutSlot.Secondary, LoadoutSlot.Armor, LoadoutSlot.Rig, LoadoutSlot.Backpack })
+            if (loadoutTab)
+            foreach (LoadoutSlot slot in System.Enum.GetValues(typeof(LoadoutSlot)))
             {
                 var stack = equipment.Get(slot);
-                GUI.Label(new Rect(panel.x + 25, y, 280, 22), $"{slot}: {(stack == null ? "Empty" : stack.Item.DisplayName)}"); y += 23;
+                GUILayout.Label($"{slot.ToString().ToUpperInvariant()}   /   {(stack == null ? "Empty" : TacticalUI.Name(stack.Item.DisplayName))}");
             }
-            y += 12; GUI.Label(new Rect(panel.x + 20, y, 300, 24), $"LOOT  {session.FoundLoot.Count} / {session.LootCapacity}"); y += 30;
+            else
+            {
+            if (session.FoundLoot.Count == 0) GUILayout.Label("Backpack empty. Search containers and recover supplies.");
             for (int i = 0; i < session.FoundLoot.Count; i++)
             {
                 ItemStack stack = session.FoundLoot[i]; Color previous = GUI.color; GUI.color = RarityPalette.Color(stack.Item.Rarity);
-                GUI.Label(new Rect(panel.x + 25, y, 400, 24), $"{stack.Item.Rarity,-10} {stack.Item.DisplayName} x{stack.Quantity}"); GUI.color = previous;
-                if (GUI.Button(new Rect(panel.xMax - 115, y, 90, 23), "Discard"))
+                GUILayout.BeginHorizontal();
+                GUILayout.Label($"{stack.Item.Rarity}   /   {TacticalUI.Name(stack.Item.DisplayName)} ×{stack.Quantity}"); GUI.color = previous;
+                if (GUILayout.Button("INSPECT", GUILayout.Width(130))) inspected = TacticalUI.Name(stack.Item.DisplayName) + " — " + stack.Item.Description;
+                bool discard = GUILayout.Button("DISCARD", GUILayout.Width(130));
+                GUILayout.EndHorizontal();
+                if (discard)
                 {
-                    session.RemoveLoot(stack.Item.Id, stack.Quantity); Message("Discarded (debug: no world drop)"); break;
+                    session.RemoveLoot(stack.Item.Id, stack.Quantity); Message("Item discarded"); break;
                 }
-                y += 27;
             }
-            if (GUI.Button(new Rect(panel.xMax - 120, panel.yMax - 40, 100, 27), "Close")) SetInventory(false);
+            }
+            GUILayout.EndScrollView();
+            if (!string.IsNullOrEmpty(inspected)) GUILayout.Label(inspected);
+            if (Time.unscaledTime < feedbackUntil) GUILayout.Label(feedback);
+            if (GUILayout.Button("CLOSE    /    ESC · TAB")) SetInventory(false);
+            TacticalUI.EndPanel();
         }
         private void DrawResult()
         {
             var zone = FindObjectsByType<ExtractionZone>(FindObjectsSortMode.None).FirstOrDefault(x => x.Succeeded);
-            Rect panel = new Rect(Screen.width / 2f - 230, Screen.height / 2f - 190, 460, 380);
+            Rect panel = new Rect(370, 120, 540, 480);
             GUI.Box(panel, "RAID SUCCESS");
             if (zone != null)
             {
@@ -167,7 +195,7 @@ namespace Outbreak.Raids
                 foreach (var stack in zone.Extracted)
                 {
                     Color previous = GUI.color; GUI.color = RarityPalette.Color(stack.Item.Rarity);
-                    GUI.Label(new Rect(panel.x + 28, y, 390, 23), $"{stack.Item.Rarity,-10} {stack.Item.DisplayName} x{stack.Quantity}");
+                    GUI.Label(new Rect(panel.x + 28, y, 390, 23), $"{stack.Item.Rarity,-10} {TacticalUI.Name(stack.Item.DisplayName)} x{stack.Quantity}");
                     GUI.color = previous; y += 25;
                 }
                 GUI.Label(new Rect(panel.x + 22, panel.yMax - 96, 410, 24), $"Stash after save: {context.Flow.Profile.Stash.Slots.Count} / {context.Flow.Profile.Stash.Capacity} slots");
@@ -181,8 +209,8 @@ namespace Outbreak.Raids
         {
             // Result actions must remain readable above the completed bodycam death fade.
             int depth = GUI.depth; GUI.depth = -10001;
-            GUI.Box(new Rect(Screen.width / 2f - 180, Screen.height / 2f + 80, 360, 100), "RAID FAILED\nLoot and deployed equipment lost\nH — Return to Hub");
-            if (Outbreak.Hub.HubSceneFlow.Instance != null && GUI.Button(new Rect(Screen.width / 2f - 165, Screen.height / 2f + 145, 330, 27), "Return To Hub")) ReturnToHub();
+            GUI.Box(new Rect(390, 410, 500, 170), "RAID FAILED\nLoot and deployed equipment lost");
+            if (Outbreak.Hub.HubSceneFlow.Instance != null && GUI.Button(new Rect(420, 505, 440, 48), "RETURN TO HUB    /    H")) ReturnToHub();
             GUI.depth = depth;
         }
     }

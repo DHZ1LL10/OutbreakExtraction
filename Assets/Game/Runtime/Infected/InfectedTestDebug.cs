@@ -23,7 +23,7 @@ namespace Outbreak.Infected
         }
         private void OnGUI()
         {
-            if (player == null) return;
+            if (player == null || !PresentationMode.ShowDiagnostics) return;
             if (!player.IsAlive)
             {
                 int depth = GUI.depth; GUI.depth = -11000;

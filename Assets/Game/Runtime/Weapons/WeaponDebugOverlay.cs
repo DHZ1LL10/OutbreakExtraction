@@ -21,9 +21,11 @@ namespace Outbreak.Weapons
         private void Dry(WeaponRuntimeState state) { dryUntil = Time.unscaledTime + 0.5f; }
         private void OnGUI()
         {
+            var input = firearm.GetComponent<Outbreak.Player.PlayerInput>();
+            if (PresentationMode.Active && input != null && (!input.ControlEnabled || input.GameplaySuppressed)) return;
             var state = firearm.Current;
             if (state == null) return;
-            if (showOverlay)
+            if (showOverlay && PresentationMode.ShowDiagnostics)
             {
                 float panelX = Mathf.Max(12, Screen.width - 390);
                 float recoil = state.Definition.recoilVertical > 0 ? state.Stats.RecoilVertical / state.Definition.recoilVertical : 1;

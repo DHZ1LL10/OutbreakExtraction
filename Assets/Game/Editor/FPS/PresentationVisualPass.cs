@@ -52,6 +52,7 @@ namespace Outbreak.Editor
             if (scene.name == "RaidLoop_Test") Raid(scene);
             else if (scene.name == "Hub_Test") Hub(scene);
             else throw new InvalidOperationException("Presentation is restricted to Hub_Test/RaidLoop_Test.");
+            ConfigurePresentation(scene);
             Validate(scene);
         }
         private static T[] InScene<T>(Scene scene) where T : Component => scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<T>(true)).ToArray();
@@ -96,12 +97,27 @@ namespace Outbreak.Editor
             // Keep entry/loot/combat routes readable; large props have simple collision proxies.
             Car(props, proxies, new Vector3(5,0,8), 24, "Abandoned car");
             Car(props, proxies, new Vector3(-14,0,29), -15, "Stripped car");
-            for (int i=0;i<7;i++)
+            for (int i=0;i<14;i++)
             {
-                Model(Props+"Concrete_Fence.prefab", props, "West perimeter fence", new Vector3(-22,0,-16+i*10), Quaternion.Euler(0,90,0), new Vector3(1.5f,1.6f,1));
-                Model(Props+"Concrete_Fence.prefab", props, "East perimeter fence", new Vector3(22,0,-16+i*10), Quaternion.Euler(0,90,0), new Vector3(1.5f,1.6f,1));
+                Model(Props+"Concrete_Fence.prefab", props, "West perimeter fence", new Vector3(-22,0,-18+i*5), Quaternion.Euler(0,90,0), new Vector3(1.5f,1.4f,1));
+                Model(Props+"Concrete_Fence.prefab", props, "East perimeter fence", new Vector3(22,0,-18+i*5), Quaternion.Euler(0,90,0), new Vector3(1.5f,1.4f,1));
             }
-            Model(Props+"Fuel_Canister.prefab", props, "Discarded fuel", new Vector3(-4,.02f,19), Quaternion.Euler(0,25,0), Vector3.one*1.2f, true);
+            // Continuous street edges connect the scattered assets into one small settlement.
+            foreach(float x in new[]{-5.5f,5.5f})
+                Box("Street shoulder",environment,new Vector3(x,.008f,14),new Vector3(1.2f,.012f,64),concrete);
+            var patch=Mat("Road repairs",new Color(.115f,.13f,.14f));
+            for(int i=0;i<9;i++)
+            {
+                var repair=Box("Asphalt repair",environment,new Vector3(i%2==0?-2.1f:2.8f,.025f,-12+i*6),new Vector3(1.5f,.01f,2.1f),patch);
+                repair.transform.rotation=Quaternion.Euler(0,i*23,0);
+            }
+            Box("Medical sign backing",props,new Vector3(-13.5f,2.3f,3.94f),new Vector3(1.55f,.34f,.04f),timber);
+            Label("MEDICAL / SUPPLIES",props,new Vector3(-13.5f,2.3f,3.91f),.025f);
+            Label("QUARANTINE / NORTH",props,new Vector3(0,1.12f,16.65f),.045f);
+            var salvage=Model(Buildings+"stove_burned.prefab",props,"Discarded household scrap",new Vector3(-17,0,12),Quaternion.Euler(0,22,0),Vector3.one);
+            Ground(salvage);
+            var fuel = Model(Props+"Fuel_Canister.prefab", props, "Discarded fuel", new Vector3(-4,0,19), Quaternion.Euler(0,25,0), Vector3.one*1.2f);
+            Ground(fuel);
             Model(Buildings+"stove_burned.prefab", props, "Abandoned stove", new Vector3(18,0,31), Quaternion.Euler(0,-90,0), Vector3.one);
             Box("Barricade base", props, new Vector3(1, .6f,17), new Vector3(9,1.2f,.65f), timber);
             // Original LOS collider remains the authoritative central wall.
@@ -231,6 +247,12 @@ namespace Outbreak.Editor
                 if(station is Outbreak.Hub.StashStation)Box("Stash case",visual,p+new Vector3(-.4f,.77f,0),new Vector3(.8f,.3f,.55f),Mat("Locker metal",new Color(.22f,.27f,.25f)));
             }
             var missionLabel=InScene<TextMesh>(scene).FirstOrDefault(t=>t.text=="MISSIONS");if(missionLabel!=null)missionLabel.text="COMMANDER";
+            foreach(var label in InScene<TextMesh>(scene))
+            {
+                if(label.text.Contains("SAFEHOUSE"))continue;
+                label.characterSize=.035f; label.fontSize=64;
+                label.color=new Color(.72f,.76f,.65f);
+            }
             foreach(float z in new[]{2f,8f,12f})Lamp(environment,new Vector3(0,3.15f,z),new Color(1,.78f,.49f),3.5f,9);
             Label("OUTBREAK / FIELD SAFEHOUSE",environment,new Vector3(0,2.5f,13.75f),.075f);
             Model(Props+"First_Aid.prefab",props,"Emergency supplies",new Vector3(-6.7f,1.2f,12.5f),Quaternion.identity,Vector3.one*3);
@@ -249,13 +271,14 @@ namespace Outbreak.Editor
             var old=view.transform.Find("VisualModel");if(old!=null)Object.DestroyImmediate(old.gameObject);
             foreach(var renderer in view.GetComponentsInChildren<Renderer>(true))renderer.enabled=false;
             var model=Model(rifle ? "Assets/DelthorGames/AKM/Prefabs/AKM.prefab" : Props+"Pistol1.prefab",view.transform,"VisualModel",Vector3.zero,Quaternion.identity,Vector3.one);
-            model.transform.localPosition=rifle ? new Vector3(0,-.064f,.1f):new Vector3(0,-.11f,0);
-            model.transform.localRotation=Quaternion.Euler(0,rifle ? 180:90,0);model.transform.localScale=Vector3.one*(rifle ? .042f:1);
+            const float scale=.82f;
+            model.transform.localPosition=(rifle ? new Vector3(0,-.064f,.1f):new Vector3(0,-.11f,0))*scale;
+            model.transform.localRotation=Quaternion.Euler(0,rifle ? 180:90,0);model.transform.localScale=Vector3.one*(rifle ? .042f:1)*scale;
             foreach(var t in model.GetComponentsInChildren<Transform>(true))t.gameObject.layer=2;
             foreach(var renderer in model.GetComponentsInChildren<Renderer>()){renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;}
             var so=new SerializedObject(view);
-            so.FindProperty("hipPosition").vector3Value=rifle?new Vector3(.18f,-.16f,.40f):new Vector3(.14f,-.16f,.42f);
-            so.FindProperty("adsPosition").vector3Value=rifle?new Vector3(0,-.046f,.40f):new Vector3(0,-.044f,.42f);
+            so.FindProperty("hipPosition").vector3Value=rifle?new Vector3(.20f,-.18f,.52f):new Vector3(.15f,-.17f,.52f);
+            so.FindProperty("adsPosition").vector3Value=rifle?new Vector3(0,-.046f*scale,.52f):new Vector3(0,-.044f*scale,.52f);
             string magName=rifle?"Cube.003_low":"Pistol1_Magazine";
             var magazine=model.GetComponentsInChildren<Transform>(true).FirstOrDefault(t=>t.name==magName);
             if(magazine==null)throw new InvalidOperationException("Model magazine missing: "+magName);
@@ -266,6 +289,11 @@ namespace Outbreak.Editor
             SetAnchor(so,"magazineSocket",rifle?new Vector3(0,-.10f,.115f):new Vector3(0,-.11f,-.008f));
             SetAnchor(so,"gripSocket",new Vector3(0,-.035f,rifle?.27f:.18f));
             SetAnchor(so,"ejectionPoint",new Vector3(.035f,.007f,rifle?.16f:.06f));
+            foreach(string field in new[]{"muzzle","muzzleSocket","opticSocket","magazineSocket","gripSocket","ejectionPoint"})
+            {
+                var anchor=(Transform)so.FindProperty(field).objectReferenceValue;
+                anchor.localPosition*=scale; anchor.localScale=Vector3.one*scale;
+            }
             so.ApplyModifiedPropertiesWithoutUndo();view.UpdatePose(0,false,false,0);
         }
         private static void SetAnchor(SerializedObject so,string field,Vector3 position)
@@ -273,7 +301,14 @@ namespace Outbreak.Editor
         private static InfectedController InfectedPrefab(bool runner)
         {
             string path=Content+(runner?"/PresentationRunner.prefab":"/PresentationInfected.prefab");
-            var existing=AssetDatabase.LoadAssetAtPath<InfectedController>(path);if(existing!=null)return existing;
+            var existing=AssetDatabase.LoadAssetAtPath<InfectedController>(path);
+            if(existing!=null)
+            {
+                var contents=PrefabUtility.LoadPrefabContents(path);
+                try { InfectedMaterials(contents); PrefabUtility.SaveAsPrefabAsset(contents,path); }
+                finally { PrefabUtility.UnloadPrefabContents(contents); }
+                return AssetDatabase.LoadAssetAtPath<InfectedController>(path);
+            }
             var source="Assets/Game/DebugContent/Infected/"+(runner?"DebugRunner":"DebugInfected")+".prefab";
             var root=PrefabUtility.LoadPrefabContents(source);
             try
@@ -288,9 +323,22 @@ namespace Outbreak.Editor
                 Reference(adapter,"headHitbox",root.GetComponentsInChildren<DamageHitbox>().First(h=>h.zone==HitZone.Head).transform);
                 var aso=new SerializedObject(adapter);aso.FindProperty("runner").boolValue=runner;aso.ApplyModifiedPropertiesWithoutUndo();
                 var presentation=root.GetComponent<InfectedPresentation>();var pso=new SerializedObject(presentation);pso.FindProperty("useAnimatedPose").boolValue=true;pso.ApplyModifiedPropertiesWithoutUndo();
+                InfectedMaterials(root);
                 return PrefabUtility.SaveAsPrefabAsset(root,path).GetComponent<InfectedController>();
             }
             finally{PrefabUtility.UnloadPrefabContents(root);}
+        }
+        private static void InfectedMaterials(GameObject root)
+        {
+            // Source vendor materials remain unchanged. The presentation variant receives world lighting.
+            var material=Mat("Infected lit",Color.white);
+            var source=AssetDatabase.LoadAssetAtPath<Material>(Zombie+"Materials/ZombieMaterial.mat");
+            material.SetTexture("_BaseMap",source.GetTexture("_BaseMap"));EditorUtility.SetDirty(material);
+            foreach(var renderer in root.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                renderer.sharedMaterials=renderer.sharedMaterials.Select(_=>material).ToArray();
+                renderer.shadowCastingMode=ShadowCastingMode.On;renderer.receiveShadows=true;
+            }
         }
         private static AnimatorController Controller()
         {
@@ -309,10 +357,46 @@ namespace Outbreak.Editor
         {
             var sun=InScene<Light>(scene).FirstOrDefault(l=>l.type==LightType.Directional);
             if(sun!=null){sun.color=hub?new Color(1,.9f,.74f):new Color(.75f,.83f,.95f);sun.intensity=hub?.45f:.85f;sun.shadows=LightShadows.Soft;sun.transform.rotation=Quaternion.Euler(48,-32,0);RenderSettings.sun=sun;}
-            RenderSettings.ambientMode=AmbientMode.Flat;RenderSettings.ambientLight=hub?new Color(.38f,.34f,.29f):new Color(.40f,.44f,.49f);
+            RenderSettings.ambientMode=AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor=hub?new Color(.38f,.34f,.29f):new Color(.42f,.47f,.54f);
+            RenderSettings.ambientEquatorColor=hub?new Color(.26f,.23f,.19f):new Color(.27f,.30f,.32f);
+            RenderSettings.ambientGroundColor=hub?new Color(.14f,.12f,.10f):new Color(.15f,.16f,.17f);
             RenderSettings.skybox=AssetDatabase.LoadAssetAtPath<Material>("Assets/ithappy/Apocalypse_Free/Skyboxes/Skybox_3.mat");
             RenderSettings.fog=!hub;RenderSettings.fogMode=FogMode.Linear;RenderSettings.fogColor=new Color(.45f,.49f,.53f);RenderSettings.fogStartDistance=35;RenderSettings.fogEndDistance=110;
             foreach(var camera in InScene<Camera>(scene)){camera.clearFlags=CameraClearFlags.Skybox;camera.backgroundColor=new Color(.45f,.49f,.53f);}
+        }
+        private static void Ground(GameObject model)
+        { model.transform.position -= Vector3.up * Bounds(model).min.y; }
+
+        private static void ConfigurePresentation(Scene scene)
+        {
+            var player=InScene<Outbreak.Player.PlayerInput>(scene).Single();
+            if(player.GetComponent<PresentationMode>()==null)player.gameObject.AddComponent<PresentationMode>();
+            var input=new SerializedObject(player); input.FindProperty("blockMovementWhileSuppressed").boolValue=true;input.ApplyModifiedPropertiesWithoutUndo();
+            foreach(var body in InScene<Outbreak.Cameras.BodycamController>(scene))
+            {
+                var so=new SerializedObject(body);so.FindProperty("normalFov").floatValue=79;so.ApplyModifiedPropertiesWithoutUndo();
+            }
+            foreach(var camera in InScene<Camera>(scene))
+            {
+                camera.fieldOfView=79;camera.allowDynamicResolution=false;camera.allowHDR=true;camera.allowMSAA=true;
+                var data=camera.GetUniversalAdditionalCameraData();data.renderPostProcessing=true;
+                data.antialiasing=AntialiasingMode.SubpixelMorphologicalAntiAliasing;
+                data.antialiasingQuality=AntialiasingQuality.High;
+            }
+            // The active PC pipeline already renders at native resolution with 4x MSAA.
+            // Keep project-wide quality profiles untouched; use scene SMAA for remaining edge shimmer.
+            var existing=Find(scene,"Presentation grading");if(existing!=null)Object.DestroyImmediate(existing);
+            string path=Content+(scene.name=="Hub_Test"?"/SafehouseGrading.asset":"/RaidGrading.asset");
+            var profile=AssetDatabase.LoadAssetAtPath<VolumeProfile>(path);
+            if(profile==null)
+            {
+                profile=ScriptableObject.CreateInstance<VolumeProfile>();AssetDatabase.CreateAsset(profile,path);
+                var tone=profile.Add<Tonemapping>();tone.mode.Override(TonemappingMode.Neutral);AssetDatabase.AddObjectToAsset(tone,profile);
+                var color=profile.Add<ColorAdjustments>();color.contrast.Override(8);color.saturation.Override(-7);
+                color.postExposure.Override(.12f);AssetDatabase.AddObjectToAsset(color,profile);EditorUtility.SetDirty(profile);
+            }
+            var volume=new GameObject("Presentation grading").AddComponent<Volume>();volume.isGlobal=true;volume.priority=5;volume.sharedProfile=profile;
         }
         private static GameObject Model(string path,Transform parent,string name,Vector3 position,Quaternion rotation,Vector3 scale,bool centerOnPosition=false)
         {

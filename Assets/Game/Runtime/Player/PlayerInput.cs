@@ -12,6 +12,7 @@ namespace Outbreak.Player
         [SerializeField] private KeyCode leanLeftKey = KeyCode.Q;
         [SerializeField] private KeyCode leanRightKey = KeyCode.E;
         [SerializeField] private bool lockCursorOnStart = true;
+        [SerializeField] private bool blockMovementWhileSuppressed;
         public bool FireHeld { get; private set; }
         public bool FirePressed { get; private set; }
         public bool AimHeld { get; private set; }
@@ -41,7 +42,7 @@ namespace Outbreak.Player
             if (GameplaySuppressed)
             {
                 // Walk away from a container without giving the UI mouse back to the FPS.
-                if (ControlEnabled && Application.isFocused)
+                if (!blockMovementWhileSuppressed && ControlEnabled && Application.isFocused)
                     MoveInput = Vector2.ClampMagnitude(new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")), 1);
                 return;
             }

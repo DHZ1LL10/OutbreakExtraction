@@ -49,6 +49,19 @@ namespace Outbreak.Tests
             managerObject.SetActive(true); yield return null;
             yield return SceneManager.LoadSceneAsync("Hub_Test"); yield return null;
             Assert.AreSame(manager, GameManager.Persistent); Assert.AreSame(driver, HubSceneFlow.Instance); Assert.IsTrue(driver.Ready);
+            Assert.IsTrue(PresentationMode.Active); Assert.IsFalse(PresentationMode.DebugVisible);
+            var presentation = UnityEngine.Object.FindFirstObjectByType<PresentationMode>();
+            presentation.ToggleDiagnostics(); Assert.IsTrue(PresentationMode.ShowDiagnostics);
+            presentation.ToggleDiagnostics(); Assert.IsFalse(PresentationMode.ShowDiagnostics);
+            var hubUI = UnityEngine.Object.FindFirstObjectByType<HubDebugUI>();
+            var hubInput = hubUI.GetComponent<Outbreak.Player.PlayerInput>();
+            Assert.IsTrue(new SerializedObject(hubInput).FindProperty("blockMovementWhileSuppressed").boolValue);
+            typeof(HubDebugUI).GetMethod("SetInventory", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(hubUI, new object[] { true });
+            Assert.IsTrue(hubInput.GameplaySuppressed); Assert.IsFalse(hubInput.HasControl);
+            yield return null;
+            Assert.AreEqual(Vector2.zero, hubInput.MoveInput);
+            typeof(HubDebugUI).GetMethod("SetInventory", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(hubUI, new object[] { false });
+            Assert.IsFalse(hubInput.GameplaySuppressed);
             Assert.IsTrue(driver.AcceptMission());
             Assert.IsTrue(driver.Equip(LoadoutSlot.Primary, rifle.item));
             var optic = attachments.First(a => a.slot == AttachmentSlot.Optic);
@@ -57,6 +70,8 @@ namespace Outbreak.Tests
             for (int i = 0; i < 600 && SceneManager.GetActiveScene().name != "RaidLoop_Test"; i++) yield return null;
             yield return null;
             Assert.AreEqual("RaidLoop_Test", SceneManager.GetActiveScene().name);
+            Assert.IsTrue(PresentationMode.Active); Assert.IsFalse(PresentationMode.DebugVisible);
+            Assert.That(Camera.main.fieldOfView, Is.InRange(78f, 80f));
             var firearm = UnityEngine.Object.FindFirstObjectByType<FirearmController>();
             Assert.AreEqual(rifle.WeaponId, firearm.PrimaryState.Definition.WeaponId); Assert.IsNull(firearm.SecondaryState);
             Assert.AreSame(optic, firearm.PrimaryState.Attachments[AttachmentSlot.Optic]); Assert.AreSame(manager.Flow, UnityEngine.Object.FindFirstObjectByType<Outbreak.Raids.RaidRuntimeContext>().Flow);

@@ -19,22 +19,51 @@ namespace Outbreak.Hub
         private bool sell;
         private LoadoutSlot selectedWeapon = LoadoutSlot.Primary;
         private string inspected;
+        private string tradeFeedback;
+        private bool inventoryOpen;
+        private bool loadoutTab;
+        private Outbreak.Player.PlayerInput input;
         private HubSceneFlow Hub => HubSceneFlow.Instance;
-        private void Awake() { interactor = GetComponent<PlayerInteractor>(); }
+        private void Awake() { interactor = GetComponent<PlayerInteractor>(); input = GetComponent<Outbreak.Player.PlayerInput>(); }
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Tab) && Hub != null && Hub.Ready)
+            {
+                if (interactor.ActivePanel != null) interactor.ClosePanel();
+                else SetInventory(!inventoryOpen);
+            }
+            if (inventoryOpen && (Input.GetKeyDown(KeyCode.Escape) || Hub == null || !Hub.Ready || Hub.Transitioning)) SetInventory(false);
+        }
+        private void SetInventory(bool value) { inventoryOpen = value; input?.SetGameplaySuppressed(this, value); }
+        private void OnDisable() { if (inventoryOpen) SetInventory(false); }
         private void OnGUI()
         {
             var hub = Hub; if (hub == null || hub.Flow == null) return;
             var profile = hub.Flow.Profile;
-            GUI.Box(new Rect(12, 12, 400, 82), $"HUB | ${profile.Wallet.Balance}\nStash {profile.Stash.Slots.Count}/{profile.Stash.Capacity}\n{hub.Message}");
-            if (!(interactor.ActivePanel is HubStation station))
+            using (new TacticalUI.Scope())
             {
-                if (interactor.Focused != null) GUI.Box(new Rect(Screen.width / 2f - 160, Screen.height - 70, 320, 32), "[E] " + interactor.Focused.Prompt);
+            if (PresentationMode.ShowDiagnostics)
+                GUI.Box(new Rect(20, 260, 340, 85), $"HUB | ${profile.Wallet.Balance}\nStash {profile.Stash.Slots.Count}/{profile.Stash.Capacity}\n{hub.Message}");
+            var station = interactor.ActivePanel as HubStation;
+            if (station == null && !inventoryOpen)
+            {
+                if (interactor.Focused != null) TacticalUI.Prompt("[E] " + interactor.Focused.Prompt);
+                if (!hub.Ready) TacticalUI.Prompt(hub.Message, 575);
                 return;
             }
-            float width = Mathf.Min(720, Screen.width - 24), height = Mathf.Min(560, Screen.height - 110);
-            GUILayout.BeginArea(new Rect((Screen.width - width) / 2, (Screen.height - height) / 2 + 35, width, height), station.PanelTitle, GUI.skin.window);
+            TacticalUI.BeginPanel(inventoryOpen ? "PERSONAL EQUIPMENT" : station.PanelTitle,
+                $"FIELD SAFEHOUSE     /     ${profile.Wallet.Balance}     /     STASH {profile.Stash.Slots.Count} : {profile.Stash.Capacity}");
             scroll = GUILayout.BeginScrollView(scroll);
-            switch (station.Kind)
+            if (inventoryOpen)
+            {
+                GUILayout.BeginHorizontal();
+                if (GUILayout.Button("INVENTORY")) loadoutTab = false;
+                if (GUILayout.Button("LOADOUT")) loadoutTab = true;
+                GUILayout.EndHorizontal();
+                if (loadoutTab) DrawEquipment(profile, false);
+                else { GUILayout.Label("No raid loot in safehouse. Open STASH to manage stored items."); DrawEquipment(profile, false); }
+            }
+            else switch (station.Kind)
             {
                 case HubStationKind.Stash: DrawStash(profile); break;
                 case HubStationKind.Loadout: DrawLoadout(profile); break;
@@ -42,7 +71,10 @@ namespace Outbreak.Hub
                 case HubStationKind.Workbench: DrawWorkbench(profile); break;
                 case HubStationKind.Missions: DrawMission(); break;
                 case HubStationKind.Deploy:
-                    GUILayout.Label("Quarantine Outskirts | Difficulty: Debug/Normal");
+                    TacticalUI.Heading("QUARANTINE OUTSKIRTS");
+                    GUILayout.Label("DIFFICULTY   /   Normal\nOBJECTIVE   /   Recover supplies and extract");
+                    if (hub.Flow.MissionProgress?.state == QuestState.Active) GUILayout.Label("Active assignment: " + hub.Flow.Mission.DisplayName);
+                    GUILayout.Space(20);
                     DrawEquipment(profile, false);
                     GUI.enabled = HubLoadoutAdapter.CanDeploy(hub.Flow, hub.Weapons, hub.Attachments);
                     if (GUILayout.Button("START RAID")) hub.Deploy();
@@ -50,8 +82,9 @@ namespace Outbreak.Hub
             }
             GUILayout.EndScrollView();
             GUILayout.Label(hub.Message);
-            if (GUILayout.Button("Close (Escape)")) interactor.ClosePanel();
-            GUILayout.EndArea();
+            if (GUILayout.Button("CLOSE    /    ESC · TAB")) { if (inventoryOpen) SetInventory(false); else interactor.ClosePanel(); }
+            TacticalUI.EndPanel();
+            }
         }
         private void DrawMission()
         {
@@ -68,7 +101,7 @@ namespace Outbreak.Hub
                     GUILayout.Label($"ACTIVE MISSION\nMedical Supplies: {progress.count} / {definition.RequiredCount}\nExtract successfully");
                     break;
                 case QuestState.ReadyToTurnIn:
-                    GUILayout.Label("MISSION COMPLETE");
+                    GUILayout.Label("READY TO TURN IN");
                     GUILayout.Label($"Reward: +${definition.RewardMoney} / +{definition.RewardXP} XP");
                     if (GUILayout.Button("TURN IN")) Hub.TurnInMission();
                     break;
@@ -85,28 +118,32 @@ namespace Outbreak.Hub
         }
         private void DrawStash(PlayerProfile profile)
         {
-            GUILayout.Label($"STASH {profile.Stash.Slots.Count} / {profile.Stash.Capacity}");
+            GUILayout.BeginHorizontal();
+            GUILayout.BeginVertical(GUILayout.Width(615));
+            TacticalUI.Heading($"STORAGE    {profile.Stash.Slots.Count} / {profile.Stash.Capacity}");
             if (!string.IsNullOrEmpty(inspected)) GUILayout.Label(inspected);
             foreach (var stack in profile.Stash.Slots.ToArray())
             {
                 Color color = GUI.color; GUI.color = RarityPalette.Color(stack.Item.Rarity);
-                GUILayout.Label($"{stack.Item.DisplayName} x{stack.Quantity} | {stack.Item.Rarity} | sell ${stack.Item.SellValue}/unit"); GUI.color = color;
+                GUILayout.Label($"{TacticalUI.Name(stack.Item.DisplayName)} x{stack.Quantity} | {stack.Item.Rarity} | sell ${stack.Item.SellValue}/unit"); GUI.color = color;
                 GUILayout.BeginHorizontal();
-                if (GUILayout.Button("Inspect")) inspected = stack.Item.DisplayName + " | " + stack.Item.Description;
+                if (GUILayout.Button("Inspect")) inspected = TacticalUI.Name(stack.Item.DisplayName) + " | " + stack.Item.Description;
                 foreach (LoadoutSlot slot in Enum.GetValues(typeof(LoadoutSlot)))
                     if (Fits(slot, stack.Item) && GUILayout.Button("Equip " + slot)) { Hub.Equip(slot, stack.Item); break; }
                 GUILayout.EndHorizontal();
             }
-            DrawEquipment(profile, true);
+            GUILayout.EndVertical();
+            GUILayout.BeginVertical(GUILayout.Width(335));
+            TacticalUI.Heading("LOADOUT"); DrawEquipment(profile, true);
+            GUILayout.EndVertical(); GUILayout.EndHorizontal();
         }
         private void DrawEquipment(PlayerProfile profile, bool editable)
         {
             foreach (LoadoutSlot slot in Enum.GetValues(typeof(LoadoutSlot)))
             {
                 var stack = profile.Loadout.Get(slot);
-                GUILayout.BeginHorizontal(); GUILayout.Label(slot + ": " + (stack == null ? "Empty" : stack.Item.DisplayName + " x" + stack.Quantity));
-                if (editable && stack != null && GUILayout.Button("Return to Stash", GUILayout.Width(145))) Hub.Change(f => f.Unequip(slot));
-                GUILayout.EndHorizontal();
+                GUILayout.Label(slot.ToString().ToUpperInvariant() + "   /   " + (stack == null ? "Empty" : TacticalUI.Name(stack.Item.DisplayName) + " x" + stack.Quantity));
+                if (editable && stack != null && GUILayout.Button("UNEQUIP " + slot)) Hub.Change(f => f.Unequip(slot));
             }
         }
         private void DrawLoadout(PlayerProfile profile)
@@ -114,43 +151,49 @@ namespace Outbreak.Hub
             DrawEquipment(profile, true);
             foreach (LoadoutSlot slot in Enum.GetValues(typeof(LoadoutSlot)))
                 foreach (var stack in profile.Stash.Slots.ToArray())
-                    if (Fits(slot, stack.Item) && GUILayout.Button($"{slot} <- {stack.Item.DisplayName}")) Hub.Equip(slot, stack.Item);
+                    if (Fits(slot, stack.Item) && GUILayout.Button($"{slot} <- {TacticalUI.Name(stack.Item.DisplayName)}")) Hub.Equip(slot, stack.Item);
         }
         private void DrawTrader(PlayerProfile profile)
         {
-            GUILayout.BeginHorizontal(); if (GUILayout.Button("BUY")) sell = false; if (GUILayout.Button("SELL")) sell = true; GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal(); if (GUILayout.Button(sell ? "BUY" : "[ BUY ]")) sell = false; if (GUILayout.Button(sell ? "[ SELL ]" : "SELL")) sell = true; GUILayout.EndHorizontal();
+            if (!string.IsNullOrEmpty(tradeFeedback)) GUILayout.Label(tradeFeedback);
             if (!sell)
                 foreach (var item in Hub.TraderStock)
                 {
                     int quantity = item.Type == ItemType.Ammo ? 30 : 1;
-                    if (GUILayout.Button($"Buy {item.DisplayName} x{quantity} | ${item.BuyValue * quantity}")) Hub.Change(f => f.Buy(item.Id, quantity));
+                    if (GUILayout.Button($"Buy {TacticalUI.Name(item.DisplayName)} x{quantity} | ${item.BuyValue * quantity}"))
+                    {
+                        if (!profile.Wallet.CanAfford(item.BuyValue * quantity)) tradeFeedback = "Insufficient funds.";
+                        else if (!profile.Stash.Copy().AddItem(item, quantity)) tradeFeedback = "Stash full. Free storage space before buying.";
+                        else tradeFeedback = Hub.Change(f => f.Buy(item.Id, quantity)) ? "Purchased " + TacticalUI.Name(item.DisplayName) + " ×" + quantity : Hub.Message;
+                    }
                 }
             else foreach (var stack in profile.Stash.Slots.ToArray())
             {
                 if (stack.Item.SellValue <= 0 || stack.Item.Type == ItemType.QuestItem) continue;
-                GUILayout.BeginHorizontal(); GUILayout.Label(stack.Item.DisplayName + " x" + stack.Quantity);
-                if (GUILayout.Button($"Sell 1 (${stack.Item.SellValue})")) Hub.Change(f => f.Sell(stack.Item.Id, 1));
-                if (GUILayout.Button($"Sell stack (${stack.Item.SellValue * stack.Quantity})")) Hub.Change(f => f.Sell(stack.Item.Id, stack.Quantity));
+                GUILayout.BeginHorizontal(); GUILayout.Label(TacticalUI.Name(stack.Item.DisplayName) + " x" + stack.Quantity);
+                if (GUILayout.Button($"Sell 1 (${stack.Item.SellValue})")) tradeFeedback = Hub.Change(f => f.Sell(stack.Item.Id, 1)) ? "Sold " + TacticalUI.Name(stack.Item.DisplayName) + " ×1" : Hub.Message;
+                if (GUILayout.Button($"Sell stack (${stack.Item.SellValue * stack.Quantity})")) tradeFeedback = Hub.Change(f => f.Sell(stack.Item.Id, stack.Quantity)) ? "Sold " + TacticalUI.Name(stack.Item.DisplayName) + " ×" + stack.Quantity : Hub.Message;
                 GUILayout.EndHorizontal();
             }
         }
         private void DrawWorkbench(PlayerProfile profile)
         {
-            GUILayout.Label("Debug attachments are available here without purchase.");
-            GUILayout.BeginHorizontal(); if (GUILayout.Button("Primary")) selectedWeapon = LoadoutSlot.Primary; if (GUILayout.Button("Secondary")) selectedWeapon = LoadoutSlot.Secondary; GUILayout.EndHorizontal();
+            GUILayout.Label("Select a weapon and configure its available attachments.");
+            GUILayout.BeginHorizontal(); if (GUILayout.Button("AKM / PRIMARY")) selectedWeapon = LoadoutSlot.Primary; if (GUILayout.Button("PISTOL / SECONDARY")) selectedWeapon = LoadoutSlot.Secondary; GUILayout.EndHorizontal();
             var item = profile.Loadout.Get(selectedWeapon)?.Item;
             var weapon = Hub.Weapons.FirstOrDefault(w => w.WeaponId == item?.Id);
             if (weapon == null) { GUILayout.Label("Equip a weapon first."); return; }
             var state = new WeaponRuntimeState(weapon, 0, 0);
             if (!HubLoadoutAdapter.ApplyPreset(state, profile, Hub.Attachments)) { GUILayout.Label("Invalid preset."); return; }
-            GUILayout.Label(weapon.DisplayName);
+            GUILayout.Label(TacticalUI.Name(weapon.DisplayName));
             foreach (AttachmentSlot slot in Enum.GetValues(typeof(AttachmentSlot)))
             {
-                GUILayout.Label(slot + ": " + (state.Attachments[slot]?.DisplayName ?? "None"));
+                GUILayout.Label(slot + ": " + TacticalUI.Name(state.Attachments[slot]?.DisplayName ?? "None"));
                 GUILayout.BeginHorizontal();
                 if (GUILayout.Button("None")) Hub.Configure(selectedWeapon, slot, null);
                 foreach (var attachment in Hub.Attachments)
-                    if (attachment.slot == slot && attachment.IsCompatible(weapon) && GUILayout.Button(attachment.DisplayName)) Hub.Configure(selectedWeapon, slot, attachment);
+                    if (attachment.slot == slot && attachment.IsCompatible(weapon) && GUILayout.Button(TacticalUI.Name(attachment.DisplayName))) Hub.Configure(selectedWeapon, slot, attachment);
                 GUILayout.EndHorizontal();
             }
         }
