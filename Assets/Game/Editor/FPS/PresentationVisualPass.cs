@@ -46,6 +46,19 @@ namespace Outbreak.Editor
                 Apply(scene); AssetDatabase.SaveAssets(); EditorSceneManager.SaveScene(scene);
             }
         }
+        public static void RepairRaidNavigationForBuild()
+        {
+            var scene = EditorSceneManager.OpenScene("Assets/Game/Scenes/RaidLoop_Test.unity", OpenSceneMode.Single);
+            var geometry = Find(scene, "Gameplay_Geometry") ?? Find(scene, "Raid geometry");
+            var surface = geometry != null ? geometry.GetComponent<NavMeshSurface>() : null;
+            if (surface == null) throw new InvalidOperationException("Raid NavMeshSurface missing.");
+            BakeNavigationAsset(surface);
+            VerifyPaths(scene);
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            AssetDatabase.SaveAssets();
+            Debug.Log("[Presentation] Raid navigation asset regenerated through NavMeshBuilder and validated for build.");
+        }
         public static void Apply(Scene scene)
         {
             if (!AssetDatabase.IsValidFolder(Content)) AssetDatabase.CreateFolder("Assets/Game/DebugContent", "Presentation");
@@ -138,18 +151,28 @@ namespace Outbreak.Editor
             }
             var surface = geometry.GetComponent<NavMeshSurface>();
             if (surface == null) throw new InvalidOperationException("Raid NavMeshSurface missing.");
-            surface.RemoveData(); surface.BuildNavMesh();
-            if (surface.navMeshData == null) throw new InvalidOperationException("Raid NavMesh bake failed.");
-            string path = Content + "/RaidPresentationNavigation.asset";
-            var existing = AssetDatabase.LoadAssetAtPath<NavMeshData>(path);
-            if (existing != null)
-            {
-                surface.RemoveData(); EditorUtility.CopySerialized(surface.navMeshData, existing);
-                surface.navMeshData = existing; surface.AddData(); EditorUtility.SetDirty(existing);
-            }
-            else AssetDatabase.CreateAsset(surface.navMeshData,path);
+            BakeNavigationAsset(surface);
             VerifyPaths(scene);
             Lighting(scene,false);
+        }
+        private static void BakeNavigationAsset(NavMeshSurface surface)
+        {
+            surface.RemoveData();
+            surface.BuildNavMesh();
+            var baked = surface.navMeshData;
+            if (baked == null) throw new InvalidOperationException("Raid NavMesh bake failed.");
+            string path = Content + "/RaidPresentationNavigation.asset";
+            surface.RemoveData();
+            // NavMeshData is binary: persist the fresh bake directly, and never run text
+            // normalization on this .asset (UTF-8 replacement bytes corrupt its native payload).
+            if (AssetDatabase.LoadMainAssetAtPath(path) != null && !AssetDatabase.DeleteAsset(path))
+                throw new InvalidOperationException("Could not replace the existing raid NavMeshData asset.");
+            AssetDatabase.CreateAsset(baked, path);
+            AssetDatabase.SaveAssets();
+            surface.navMeshData = AssetDatabase.LoadAssetAtPath<NavMeshData>(path);
+            if (surface.navMeshData == null) throw new InvalidOperationException("Saved raid NavMeshData could not be reloaded.");
+            surface.AddData();
+            EditorUtility.SetDirty(surface);
         }
         private static void DressBuilding(Scene scene, Transform parent, Transform proxies, Vector3 origin, bool roof)
         {
