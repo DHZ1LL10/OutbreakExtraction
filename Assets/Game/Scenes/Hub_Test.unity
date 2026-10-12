@@ -2110,6 +2110,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d3fcd04b4d160cc459fb9f3f7945babc, type: 2}
   - {fileID: 11400000, guid: a825f774cdd062241a30edbbba554d8d, type: 2}
   startingMoney: 1500
+  mission: {fileID: 11400000, guid: b5713ebef3ec4526aa2360091935885b, type: 2}
 --- !u!114 &1632110810
 MonoBehaviour:
   m_ObjectHideFlags: 0
